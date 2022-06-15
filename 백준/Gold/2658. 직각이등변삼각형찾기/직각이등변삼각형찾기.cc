@@ -101,13 +101,13 @@ bool find_two() {
 
     for (int i = 0; i + y < 10; ++i) {
         if (BOARD[i + y][x] == 1) {
-            if (x + i >= 10)
+            if (x - i < 0)
                 return false;
 
             answer[1] = {y + i, x};
-            answer[2] = {y + i, x + i};
+            answer[2] = {y + i, x - i};
 
-            for (int j = x; j <= x + i; ++j) {
+            for (int j = x - i; j <= x; ++j) {
                 tmp[i + y][j] = 1;
             }
         }
@@ -121,10 +121,6 @@ bool find_two() {
     }
 
     return true;
-}
-
-bool compare(const pair<int, int> &a, const pair<int, int> &b) {
-    return a.first <= b.first;
 }
 
 void rotate_point(int n) {
