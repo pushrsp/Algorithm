@@ -4,15 +4,15 @@
 
 using namespace std;
 
-int N, K, L;
+int N, K, L, DIR = 3, TIME = 0, IDX = 0;
 vector<vector<int>> MAP;
-vector<pair<int, char>> v;
+vector<pair<int, char>> ROTATE;
 
 //위 왼 아 오
 int deltaY[4] = {-1, 0, 1, 0};
 int deltaX[4] = {0, -1, 0, 1};
 
-int Rotate(char c, int dir) {
+int get_dir(char c, int dir) {
     if (c == 'L') {
         return (dir + 1) % 4;
     } else {
@@ -27,67 +27,15 @@ int Rotate(char c, int dir) {
     }
 }
 
-void BFS() {
-    deque<pair<int, int>> dq;
-
-    int nowY = 0;
-    int nowX = 0;
-    int dir = 3;
-    int time = 0;
-    int idx = 0;
-
-    dq.emplace_back(nowY, nowX);
-    MAP[nowY][nowX] = 2;
-
-    while (true) {
-        time++;
-
-        int nextY = nowY + deltaY[dir];
-        int nextX = nowX + deltaX[dir];
-
-        if (nextY < 0 || nextY >= N)
-            break;
-        if (nextX < 0 || nextX >= N)
-            break;
-        if (MAP[nextY][nextX] == 2)
-            break;
-
-        //이동한 칸에 사과가 없으면 몸길이를 줄여서 꼬리가 위치한 칸을 비워준다. 즉, 몸길이는 변하지 않는다.
-        if (MAP[nextY][nextX] == 0) {
-            MAP[nextY][nextX] = 2;
-            MAP[dq.back().first][dq.back().second] = 0;
-            dq.pop_back();
-            dq.emplace_front(nextY, nextX);
-        } //이동한 칸에 사과가 있다면, 그 칸에 있던 사과가 없어지고 꼬리는 움직이지 않는다.
-        else if (MAP[nextY][nextX] == 1) {
-            MAP[nextY][nextX] = 2;
-            dq.emplace_front(nextY, nextX);
-        }
-
-        //방향 회전
-        if (time == v[idx].first) {
-            dir = Rotate(v[idx].second, dir);
-            idx++;
-        }
-
-        nowY = nextY;
-        nowX = nextX;
-    }
-
-    cout << time << endl;
-}
-
 int main() {
     cin >> N;
-    MAP = vector<vector<int>>(N, vector<int>(N));
+    MAP = vector<vector<int>>(N, vector<int>(N, 0));
 
     cin >> K;
     for (int i = 0; i < K; ++i) {
         int r, c;
         cin >> r >> c;
-        r -= 1;
-        c -= 1;
-        MAP[r][c] = 1;
+        MAP[r - 1][c - 1] = 1;
     }
 
     cin >> L;
@@ -95,10 +43,52 @@ int main() {
         int x;
         char c;
         cin >> x >> c;
-        v.emplace_back(x, c);
+
+        ROTATE.emplace_back(x, c);
     }
 
-    BFS();
+    deque<pair<int, int>> dq;
+    dq.emplace_back(0, 0);
+    MAP[0][0] = 2;
 
+    while (true) {
+        TIME++;
+
+        int nowY = dq.front().first;
+        int nowX = dq.front().second;
+
+        int nextY = nowY + deltaY[DIR];
+        int nextX = nowX + deltaX[DIR];
+
+        if (nextY < 0 || nextY >= N)
+            break;
+        if (nextX < 0 || nextX >= N)
+            break;
+
+        // 만약 이동한 칸에 사과가 없다면, 몸길이를 줄여서 꼬리가 위치한 칸을 비워준다. 즉, 몸길이는 변하지 않는다.
+        if (MAP[nextY][nextX] == 0) {
+            MAP[nextY][nextX] = 2;
+            MAP[dq.back().first][dq.back().second] = 0;
+
+            dq.pop_back();
+            dq.emplace_front(nextY, nextX);
+        }// 만약 이동한 칸에 사과가 있다면, 그 칸에 있던 사과가 없어지고 꼬리는 움직이지 않는다.
+        else if (MAP[nextY][nextX] == 1) {
+            MAP[nextY][nextX] = 2;
+
+            dq.emplace_front(nextY, nextX);
+        } // 자기자신의 몸과 부딪히면 게임이 끝난다
+        else {
+            break;
+        }
+
+        //방향 회전
+        if (TIME == ROTATE[IDX].first) {
+            DIR = get_dir(ROTATE[IDX].second, DIR);
+            IDX++;
+        }
+    }
+
+    cout << TIME << endl;
     return 0;
 }
