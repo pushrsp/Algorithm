@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
 #include <queue>
 
 using namespace std;
@@ -8,35 +11,36 @@ int T;
 int main() {
     cin >> T;
 
-    for (int i = 0; i < T; ++i) {
-        int N, M;
-        cin >> N >> M;
+    for (int t = 0; t < T; ++t) {
+        int n, m;
+        cin >> n >> m;
 
+        priority_queue<int, vector<int>, less<int>> pq;
         queue<pair<int, int>> q;
-        priority_queue<int> pq;
 
-        for (int j = 0; j < N; ++j) {
-            int p;
-            cin >> p;
-            q.push({j, p});
-            pq.push(p);
+        for (int i = 0; i < n; ++i) {
+            int k;
+            cin >> k;
+            q.push({i, k});
+            pq.push(k);
         }
 
-        int cnt = 0;
+        int cnt = 1;
         while (!q.empty()) {
-            auto now = q.front();
+            int nowIdx = q.front().first;
+            int nowVal = q.front().second;
             q.pop();
 
-            if (pq.top() == now.second) {
+            if (pq.top() == nowVal) {
                 pq.pop();
-                cnt++;
-
-                if (now.first == M) {
+                if (nowIdx == m) {
                     cout << cnt << endl;
                     break;
                 }
-            } else
-                q.push(now);
+                cnt++;
+            } else {
+                q.push({nowIdx, nowVal});
+            }
         }
     }
     return 0;
