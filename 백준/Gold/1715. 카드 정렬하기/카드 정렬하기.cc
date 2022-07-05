@@ -1,47 +1,38 @@
 #include <iostream>
-#include <algorithm>
+#include <vector>
 #include <queue>
 
 using namespace std;
 
 int N;
-vector<int> nums;
 
 int main() {
     cin >> N;
 
-    priority_queue<int, vector<int>, greater<>> pq;
-    for (int i = 0; i < N; ++i) {
-        int n;
-        cin >> n;
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (int n = 0; n < N; ++n) {
+        int c;
+        cin >> c;
 
-        pq.push(n);
+        pq.push(c);
     }
 
-    if (N == 1) {
-        cout << 0 << endl;
-        return 0;
-    }
-
-    if (N == 2) {
-        cout << nums[0] + nums[1] << endl;
-        return 0;
-    }
-
-    int sum = 0;
+    int result = 0;
     while (!pq.empty()) {
+        if (pq.size() == 1)
+            break;
+        
         int a = pq.top();
         pq.pop();
+
         int b = pq.top();
         pq.pop();
 
-        sum += a;
-        sum += b;
-
-        if (!pq.empty())
-            pq.push(a + b);
+        result += a;
+        result += b;
+        pq.push(a + b);
     }
 
-    cout << sum;
+    cout << result << endl;
     return 0;
 }
