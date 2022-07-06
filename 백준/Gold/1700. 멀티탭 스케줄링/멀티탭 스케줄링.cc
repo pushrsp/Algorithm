@@ -1,74 +1,62 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <queue>
+#include <list>
+#include <algorithm>
+
 using namespace std;
-int n, k;
-int schedule[101];
-int multiTap[101] = { 0, };
 
-int main() 
-{
-    int answer = 0;
-    cin >> n >> k;
-    for (int i = 0; i < k; i++) 
-        cin >> schedule[i];
+int N, K;
+vector<int> vec;
+int order[101], multi_tab[101];
 
-    for (int i = 0; i < k; i++)
-    {
-        bool flag = false;
-        //1) 이미 꽂혀 있다면 pass
-        for (int j = 0; j < n; j++)
-        {
-            if (multiTap[j] == schedule[i])
-            {
-                flag = true;
+int main() {
+    cin >> N >> K;
+    for (int i = 0; i < K; ++i)
+        cin >> order[i];
+
+    int cnt = 0;
+    for (int i = 0; i < K; ++i) {
+        bool check = false;
+
+        for (int j = 0; j < N; ++j) {
+            if (multi_tab[j] == order[i]) {
+                check = true;
                 break;
             }
         }
-        if (flag == true)
+
+        if (check)
             continue;
 
-        //2)빈칸이 있으면 꼽아
-        for (int j = 0; j < n; j++)
-        {
-            if (multiTap[j] == 0)
-            {
-                multiTap[j] = schedule[i];
-                flag = true;
+        for (int j = 0; j < N; ++j) {
+            if (!multi_tab[j]) {
+                multi_tab[j] = order[i];
+                check = true;
                 break;
             }
         }
-        if (flag == true)
+
+        if (check)
             continue;
 
-
-        //3) 빈칸 필요
-        int last_need = -1; // 가장 늦게 다가올 차례
-        int index = -1; // 뺄 멀티탭 자리
-        for (int j = 0; j < n; j++)
-        {
-            int tmp = 0;
-            for (int t = i+1;t < k; t++)
-            {
-                if (schedule[t] == multiTap[j])
-                {
+        int idx, deviceIdx = -1;
+        for (int j = 0; j < N; j++) {
+            int lastIdx = 0;
+            for (int k = i + 1; k < K; k++) {
+                if (multi_tab[j] == order[k])
                     break;
-                }
-                tmp++;
+                lastIdx++;
             }
-            if (tmp > last_need)
-            {
-                last_need = tmp;
-                index = j;
+            if (lastIdx > deviceIdx) {
+                idx = j;
+                deviceIdx = lastIdx;
             }
         }
-
-        multiTap[index] = schedule[i];
-        answer++;
-
+        multi_tab[idx] = order[i];
+        cnt++;
     }
-    cout << answer << endl;
-    
+
+    cout << cnt << endl;
     return 0;
 }
