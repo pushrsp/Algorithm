@@ -1,33 +1,34 @@
 #include <iostream>
-#include <vector>
 #include <string>
 #include <algorithm>
+#include <stack>
 
 using namespace std;
 
+string S, T;
+
 int main() {
-    string s, t;
-    cin >> s >> t;
+    cin >> S >> T;
 
-    bool done = false;
+    stack<char> s;
+    for (char &t: T)
+        s.push(t);
+
     while (true) {
-        if (s.size() == t.size()) {
-            if (s == t)
-                done = true;
-
+        if (S.size() == T.size())
             break;
-        }
 
-        char c = t[t.size() - 1];
+        char c = T[T.size() - 1];
 
-        if (c == 'A') {
-            t.pop_back();
-        } else {
-            t.pop_back();
-            reverse(t.begin(), t.end());
-        }
+        T.pop_back();
+        if (c == 'B')
+            reverse(T.begin(), T.end());
     }
 
-    cout << done << endl;
+    if (S == T)
+        cout << 1 << endl;
+    else
+        cout << 0 << endl;
+
     return 0;
 }
