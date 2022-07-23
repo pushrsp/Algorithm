@@ -1,7 +1,8 @@
 #include <iostream>
-#include <queue>
 #include <vector>
+#include <cmath>
 #include <algorithm>
+#include <queue>
 
 using namespace std;
 
@@ -21,26 +22,20 @@ int main() {
         int N, M;
         cin >> N >> M;
 
-        vector<pair<int, int>> vec;
-        int max = 0;
+        vector<pair<int, int>> p(M);
+        vector<bool> books(N + 1, false);
+
         for (int m = 0; m < M; ++m) {
-            int a, b;
-            cin >> a >> b;
-
-            vec.emplace_back(a, b);
-
-            if (b > max)
-                max = b;
+            cin >> p[m].first >> p[m].second;
         }
 
-        sort(vec.begin(), vec.end(), cmp_pair);
-        vector<bool> visited(max + 1, false);
+        sort(p.begin(), p.end(), cmp_pair);
 
         int cnt = 0;
-        for (auto &i: vec) {
-            for (int j = i.first; j <= i.second; ++j) {
-                if (!visited[j]) {
-                    visited[j] = true;
+        for (auto &pp: p) {
+            for (int i = pp.first; i <= pp.second; ++i) {
+                if (!books[i]) {
+                    books[i] = true;
                     cnt++;
                     break;
                 }
