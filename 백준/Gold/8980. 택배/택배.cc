@@ -1,48 +1,54 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <queue>
 #include <cmath>
 
 using namespace std;
 
-struct Box {
+struct Delivery {
     int from, to, count;
 
-    bool operator<(const Box &other) const {
+    bool operator<(const Delivery &other) const {
         if (to == other.to)
-            return from < other.from;
+            return from > other.from;
 
-        return to < other.to;
+        return to > other.to;
     }
 };
 
 int N, C, M;
-Box arr[10001] = {};
-int mass[10001] = {0};
 
 int main() {
     cin >> N >> C >> M;
 
-    for (int m = 0; m < M; ++m)
-        cin >> arr[m].from >> arr[m].to >> arr[m].count;
+    vector<int> villages(N + 1, 0);
+    priority_queue<Delivery> pq;
+    for (int m = 0; m < M; ++m) {
+        int from, to, count;
+        cin >> from >> to >> count;
 
-    sort(arr, arr + M);
+        pq.push({from, to, count});
+    }
 
     int answer = 0;
-    for (int m = 0; m < M; ++m) {
-        int count = 0;
+    while (!pq.empty()) {
+        Delivery delivery = pq.top();
+        pq.pop();
 
-        for (int i = arr[m].from; i < arr[m].to; ++i)
-            count = max(mass[i], count);
+        int c = 0;
+        for (int i = delivery.from; i < delivery.to; ++i) {
+            if (villages[i] > c)
+                c = villages[i];
+        }
 
-        int v = min(arr[m].count, C - count);
-        answer += v;
+        int count = min(delivery.count, C - c);
+        answer += count;
 
-        for (int i = arr[m].from; i < arr[m].to; ++i)
-            mass[i] += v;
+        for (int i = delivery.from; i < delivery.to; ++i) {
+            villages[i] += count;
+        }
     }
 
     cout << answer << endl;
-
     return 0;
 }
