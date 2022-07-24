@@ -1,44 +1,38 @@
 #include <iostream>
-#include <vector>
+#include <queue>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
 int N;
-vector<pair<int, int>> lectures;
-int days[10001] = {0};
 
 bool cmp_pair(const pair<int, int> &a, const pair<int, int> &b) {
-    return a.first > b.first;
+    return a.second < b.second;
 }
 
 int main() {
     cin >> N;
 
-    lectures = vector<pair<int, int>>(N);
-    int maxDay = 0;
+    vector<pair<int, int>> lecture(N);
+    for (int n = 0; n < N; ++n)
+        cin >> lecture[n].first >> lecture[n].second;
+
+    sort(lecture.begin(), lecture.end(), cmp_pair);
+
+    int sum = 0;
+    priority_queue<int, vector<int>, greater<int>> pq;
     for (int n = 0; n < N; ++n) {
-        cin >> lectures[n].first >> lectures[n].second;
+        sum += lecture[n].first;
+        pq.push(lecture[n].first);
 
-        if (lectures[n].second > maxDay)
-            maxDay = lectures[n].second;
-    }
-
-    sort(lectures.begin(), lectures.end(), cmp_pair);
-
-    for (auto &l: lectures) {
-        for (int i = l.second; i >= 1; i--) {
-            if (days[i] == 0) {
-                days[i] = l.first;
-                break;
-            }
+        while (lecture[n].second < pq.size()) {
+            sum -= pq.top();
+            pq.pop();
         }
     }
 
-    int sum = 0;
-    for (int i = 1; i <= maxDay; ++i)
-        sum += days[i];
-
     cout << sum << endl;
+
     return 0;
 }
