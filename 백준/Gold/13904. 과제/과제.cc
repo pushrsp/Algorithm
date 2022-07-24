@@ -1,41 +1,40 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
-#include <string>
+#include <algorithm>
+#include <queue>
 
 using namespace std;
-int arr[1001] = {0,};
+
 int N;
 
 bool cmp_pair(const pair<int, int> &a, const pair<int, int> &b) {
-    return a.second > b.second;
+    return a.first < b.first;
 }
 
 int main() {
     cin >> N;
 
-    vector<pair<int, int>> hw;
+    vector<pair<int, int>> hw(N);
     for (int n = 0; n < N; ++n) {
-        int d, w;
-        cin >> d >> w;
-
-        hw.emplace_back(d, w);
+        cin >> hw[n].first >> hw[n].second;
     }
 
     sort(hw.begin(), hw.end(), cmp_pair);
 
+    priority_queue<int, vector<int>, greater<int>> pq;
     for (int n = 0; n < N; ++n) {
-        for (int i = hw[n].first; i > 0; --i) {
-            if (arr[i] == 0) {
-                arr[i] = hw[n].second;
-                break;
-            }
-        }
+        auto cur = hw[n];
+        pq.push(cur.second);
+
+        if (cur.first < pq.size())
+            pq.pop();
     }
 
     int sum = 0;
-    for (auto &i: arr)
-        sum += i;
+    while (!pq.empty()) {
+        sum += pq.top();
+        pq.pop();
+    }
 
     cout << sum << endl;
     return 0;
