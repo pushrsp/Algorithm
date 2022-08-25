@@ -7,31 +7,39 @@ using namespace std;
 int N, K, S;
 
 int get_dist(vector<pair<int, int>> &vec) {
-    int curNum = 0;
-    int curPos = S;
-    int answer = 0;
-    vector<int> dist;
+    int answer = 0, seats = 0, apt = -1;
 
     while (!vec.empty()) {
         int pos = vec.back().first;
         int num = vec.back().second;
 
-        if (num + curNum <= K) {
+        int add = seats + num;
+        if (add == K) {
+            seats = 0;
             vec.pop_back();
-            curNum += num;
+
+            if (apt == -1) {
+                answer += abs(S - pos) * 2;
+            } else {
+                answer += apt * 2;
+                apt = -1;
+            }
+
+            continue;
+        }
+
+        if (add > K) {
+            vec.back().second -= K - seats;
+            seats = 0;
+            answer += abs(S - pos) * 2;
         } else {
-            vec.back().second -= K - curNum;
-            curNum += K - curNum;
+            seats += num;
+            vec.pop_back();
+            apt = max(apt, abs(S - pos));
         }
 
-        answer += abs(curPos - pos);
-        curPos = pos;
-
-        if (curNum == K || vec.empty()) {
-            answer += abs(curPos - S);
-            curPos = S;
-            curNum = 0;
-        }
+        if (vec.empty())
+            answer += apt * 2;
     }
 
     return answer;
