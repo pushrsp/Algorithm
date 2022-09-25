@@ -38,22 +38,6 @@ vector<Pos> get_enemy(int startY, int startX, vector<pair<int, int>> &enemy) {
     return enemies;
 }
 
-void update_enemy(vector<Pos> &enemy) {
-    vector<pair<int, int>> ret;
-    for (auto &emy: Enemy) {
-        bool remove = false;
-        for (auto &target: enemy) {
-            if (emy.first == target.y && emy.second == target.x)
-                remove = true;
-        }
-
-        if (!remove)
-            ret.push_back(emy);
-    }
-
-    Enemy = ret;
-}
-
 void solve() {
     vector<pair<int, int>> enemy(Enemy);
     int sum = 0;
