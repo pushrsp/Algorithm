@@ -4,45 +4,53 @@
 
 using namespace std;
 
-int N;
-vector<vector<bool>> BOARD;
+int N, Map[21], Answer = INT32_MAX;
+
+void go(int cnt) {
+    if (cnt == N + 1) {
+        int sum = 0;
+        for (int i = 1; i <= (1 << (N - 1)); i *= 2) {
+            int s = 0;
+            for (int j = 1; j <= N; ++j) {
+                if (i & Map[j])
+                    s++;
+            }
+
+            sum += min(s, N - s);
+        }
+
+        Answer = min(Answer, sum);
+        return;
+    }
+
+    Map[cnt] = ~Map[cnt];
+    go(cnt + 1);
+    Map[cnt] = ~Map[cnt];
+    go(cnt + 1);
+}
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> N;
 
-    BOARD = vector<vector<bool>>(N, vector<bool>(N, false));
-    for (int n = 0; n < N; ++n) {
+    for (int y = 1; y <= N; ++y) {
         string s;
         cin >> s;
 
-        for (int i = 0; i < s.size(); ++i) {
-            if (s[i] == 'T')
-                BOARD[n][i] = true;
+        int value = 1;
+        for (int x = 0; x < s.size(); ++x) {
+            if (s[x] == 'T')
+                Map[y] |= value;
+
+            value *= 2;
         }
     }
 
-    int answer = 400;
-    for (int i = 0; i < (1 << N) - 1; ++i) {
-        int sum = 0;
+    go(1);
 
-        for (int x = 0; x < N; ++x) {
-            int flipCnt = 0;
-            for (int y = 0; y < N; ++y) {
-                bool isFlip = BOARD[y][x];
-                if ((i & (1 << y)) != 0)
-                    isFlip = !BOARD[y][x];
-
-                if (isFlip)
-                    flipCnt++;
-            }
-
-            sum += min(flipCnt, N - flipCnt);
-        }
-
-        answer = min(answer, sum);
-    }
-
-    cout << answer << endl;
-
+    cout << Answer << '\n';
     return 0;
 }
