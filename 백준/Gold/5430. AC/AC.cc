@@ -1,87 +1,77 @@
 #include <iostream>
-#include <string>
+#include <sstream>
 #include <deque>
 #include <algorithm>
-#include <sstream>
 
 using namespace std;
 
 int T;
 
-deque<string> split(string input, char delimiter) {
-    deque<string> answer;
-    stringstream ss(input);
-    string temp;
+deque<string> split(string &s, char c) {
+    deque<string> ret;
+    stringstream ss(s);
+    string segment;
 
-    while (getline(ss, temp, delimiter)) {
-        answer.push_back(temp);
-    }
+    while (getline(ss, segment, c))
+        ret.push_back(segment);
 
-    return answer;
+    return ret;
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> T;
 
-    for (int t = 0; t < T; ++t) {
+    while (T--) {
         string p;
         cin >> p;
 
         int n;
         cin >> n;
 
-        string x;
-        cin >> x;
+        string s;
+        cin >> s;
 
-        x.erase(0, 1);
-        x.erase(x.size() - 1, 1);
+        s = s.substr(1, s.length() - 2);
+        deque<string> num_str = split(s, ',');
+        bool rev = false;
+        bool success = true;
 
-        deque<string> dq = split(x, ',');
-
-        bool reverse = false, error = false;
-        for (char i: p) {
-            if (i == 'R') {
-                if (reverse)
-                    reverse = false;
-                else
-                    reverse = true;
-            } else if (i == 'D') {
-                if (dq.empty()) {
-                    error = true;
-                    break;
+        for (char cmd: p) {
+            if (cmd == 'R')
+                rev = !rev;
+            else {
+                if (num_str.empty()) {
+                    success = false;
+                    continue;
                 }
 
-                if (reverse)
-                    dq.pop_back();
+                if (rev)
+                    num_str.pop_back();
                 else
-                    dq.pop_front();
+                    num_str.pop_front();
             }
         }
 
-        if (error) {
-            cout << "error" << endl;
+        if (!success) {
+            cout << "error" << '\n';
             continue;
         }
 
+        if (rev)
+            reverse(num_str.begin(), num_str.end());
+
         cout << '[';
-        if (reverse && !dq.empty()) {
-            for (auto o = dq.rbegin(); o != dq.rend(); o++) {
-                if (o == dq.rend() - 1)
-                    cout << *o;
-                else
-                    cout << *o << ',';
-            }
-        } else if (!reverse && !dq.empty()) {
-            for (auto o = dq.begin(); o != dq.end(); o++) {
-                if (o == dq.end() - 1)
-                    cout << *o;
-                else
-                    cout << *o << ',';
-            }
+        for (int i = 0; i < num_str.size(); ++i) {
+            cout << num_str[i];
+
+            if (i != num_str.size() - 1)
+                cout << ',';
         }
-
-        cout << ']' << endl;
+        cout << ']' << '\n';
     }
-
     return 0;
 }
