@@ -1,47 +1,22 @@
-#include <iostream>
-#include <queue>
-
+#include <bits/stdc++.h>
 using namespace std;
-
-struct Meeting {
-    bool operator<(const Meeting &other) const {
-        if (end == other.end)
-            return start > other.start;
-
-        return end > other.end;
+int from, to, n, idx = 0, ret = 1;  
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cin >> n;
+    vector<pair<int, int>> v; 
+    for(int i = 0; i < n; i++){
+        cin >> from >> to;
+        v.push_back({to, from}); 
     }
-
-    int start, end;
-};
-
-int N;
-
-int main() {
-    cin >> N;
-
-
-    priority_queue<Meeting> m;
-    for (int n = 0; n < N; ++n) {
-        Meeting meeting{};
-        cin >> meeting.start >> meeting.end;
-
-        m.push(meeting);
-    }
-
-    Meeting cur = m.top();
-    m.pop();
-
-    int cnt = 1;
-    while (!m.empty()) {
-        Meeting now = m.top();
-        m.pop();
-
-        if (now.start >= cur.end) {
-            cur = now;
-            cnt++;
-        }
-    }
-
-    cout << cnt << endl;
+    sort(v.begin(), v.end()); 
+    from = v[0].second; 
+    to = v[0].first;   
+    for(int i = 1; i < n; i++){
+        if(v[i].second < to) continue; 
+        from = v[i].second; to = v[i].first;ret++; 
+    } 
+    cout << ret << '\n';
     return 0;
 }
