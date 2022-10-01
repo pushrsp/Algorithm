@@ -8,6 +8,10 @@ using namespace std;
 int N;
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> N;
 
     vector<pair<int, int>> vec(N);
@@ -17,11 +21,12 @@ int main() {
     sort(vec.begin(), vec.end());
 
     priority_queue<int, vector<int>, greater<int>> pq;
-    for (int i = 0; i < N; ++i) {
-        int cur = vec[i].first;
-        pq.push(vec[i].second);
-        while (cur < pq.size())
+    for (int n = 0; n < N; ++n) {
+        pq.push(vec[n].second);
+
+        if (pq.size() > vec[n].first) {
             pq.pop();
+        }
     }
 
     int sum = 0;
@@ -30,6 +35,6 @@ int main() {
         pq.pop();
     }
 
-    cout << sum << endl;
+    cout << sum << '\n';
     return 0;
 }
