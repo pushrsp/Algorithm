@@ -3,59 +3,51 @@
 #include <queue>
 #include <algorithm>
 
+#define ll long long
+
 using namespace std;
 
 int N, K;
-vector<pair<int, int>> j;
-vector<int> b;
-
-bool cmpPair(const pair<int, int>& a, const pair<int, int>& b)
-{
-	return a.first < b.first;
-}
-
-bool cmpInt(const int& a, const int& b)
-{
-	return a < b;
-}
-
-priority_queue<int, vector<int>, less<int>> pq;
 
 int main() {
-	cin >> N >> K;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
-	j = vector<pair<int, int>>(N);
-	for (int i = 0; i < N; i++)
-		cin >> j[i].first >> j[i].second;
+    cin >> N >> K;
 
-	b = vector<int>(K);
-	for (int i = 0; i < K; i++)
-		cin >> b[i];
+    vector<pair<int, int>> j(N);
+    vector<int> b(K);
 
-	sort(j.begin(), j.end(), cmpPair);
-	sort(b.begin(), b.end(), cmpInt);
+    for (int n = 0; n < N; ++n)
+        cin >> j[n].first >> j[n].second;
 
-	uint64_t result = 0;
-	int idx = 0;
-	for (int i = 0; i < K; i++)
-	{
-		while (idx < j.size())
-		{
-			if (j[idx].first > b[i])
-				break;
+    for (int k = 0; k < K; ++k)
+        cin >> b[k];
 
-			pq.push(j[idx].second);
-			idx++;
-		}
+    sort(j.begin(), j.end());
+    sort(b.begin(), b.end());
 
-		if (!pq.empty())
-		{
-			result += pq.top();
-			pq.pop();
-		}
-	}
+    ll answer = 0;
+    int idx = 0;
 
-	cout << result << endl;
+    priority_queue<int> pq;
+    for (int k = 0; k < K; ++k) {
 
-	return 0;
+        for (int i = idx; i < N; ++i) {
+            if (j[i].first > b[k])
+                break;
+
+            pq.push(j[i].second);
+            idx++;
+        }
+
+        if (!pq.empty()) {
+            answer += pq.top();
+            pq.pop();
+        }
+    }
+
+    cout << answer << '\n';
+    return 0;
 }
