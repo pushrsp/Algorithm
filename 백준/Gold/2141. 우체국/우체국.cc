@@ -1,25 +1,51 @@
-#include <algorithm>
 #include <iostream>
+#include <vector>
+#include <algorithm>
+
+#define ll long long
 
 using namespace std;
+
 int N;
-pair<long long, long long> xa[100001];
+
+/*
+3
+1 7
+2 3
+3 1
+answer = 1;
+
+3
+1 7
+2 2
+3 8
+answer = 2;
+ */
 
 int main() {
-    cin >> N;
-    long long sum = 0;
-    for (int i = 1; i <= N; i++) {
-        cin >> xa[i].first >> xa[i].second;
-        sum += xa[i].second;
-    }
-    sort(xa + 1, xa + N + 1);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
-    long long cur = 0;
-    for (int i = 1; i <= N; i++) {
-        cur += xa[i].second;
-        if (cur >= (sum + 1) / 2) {
-            cout << xa[i].first << endl;
+    cin >> N;
+
+    ll total = 1;
+    vector<pair<ll, ll>> vec(N);
+    for (int n = 0; n < N; ++n) {
+        cin >> vec[n].first >> vec[n].second;
+        total += vec[n].second;
+    }
+
+    sort(vec.begin(), vec.end());
+
+    ll sum = 0;
+    for (int n = 0; n < N; ++n) {
+        sum += vec[n].second;
+
+        if (sum >= total / 2) {
+            cout << vec[n].first << '\n';
             break;
         }
     }
+    return 0;
 }
