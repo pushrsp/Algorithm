@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <algorithm>
 
 using namespace std;
@@ -7,45 +8,54 @@ using namespace std;
 int N, K, S;
 
 int get_dist(vector<pair<int, int>> &vec) {
-    int answer = 0, seats = 0, apt = -1;
+    int seats = 0, dist = 0, prev = -1;
 
     while (!vec.empty()) {
-        int pos = vec.back().first;
-        int num = vec.back().second;
+        int p = vec.back().first, n = vec.back().second;
+        int sum = seats + n;
 
-        int add = seats + num;
-        if (add == K) {
-            seats = 0;
+        if (sum == K) {
             vec.pop_back();
 
-            if (apt == -1) {
-                answer += abs(S - pos) * 2;
+            if (prev == -1) {
+                dist += abs(S - p) * 2;
             } else {
-                answer += apt * 2;
-                apt = -1;
+                dist += prev * 2;
+                prev = -1;
             }
 
+            seats = 0;
             continue;
         }
 
-        if (add > K) {
+        if (sum > K) {
             vec.back().second -= K - seats;
             seats = 0;
-            answer += abs(S - pos) * 2;
+
+            if (prev == -1) {
+                dist += abs(S - p) * 2;
+            } else {
+                dist += prev * 2;
+                prev = -1;
+            }
         } else {
-            seats += num;
+            seats += n;
             vec.pop_back();
-            apt = max(apt, abs(S - pos));
+            prev = max(prev, abs(S - p));
         }
 
         if (vec.empty())
-            answer += apt * 2;
+            dist += prev * 2;
     }
 
-    return answer;
+    return dist;
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> N >> K >> S;
 
     vector<pair<int, int>> left, right;
@@ -59,10 +69,9 @@ int main() {
             right.emplace_back(a, b);
     }
 
-    sort(left.begin(), left.end(), greater<>());
-    sort(right.begin(), right.end(), less<>());
+    sort(left.begin(), left.end(), greater<pair<int, int>>());
+    sort(right.begin(), right.end(), less<pair<int, int>>());
 
-    cout << get_dist(left) + get_dist(right) << endl;
-
+    cout << get_dist(left) + get_dist(right) << '\n';
     return 0;
 }
