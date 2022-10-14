@@ -41,6 +41,6 @@ int main() {
 		ret = max(ret, cmp);
 	}
 
-	printf("%.3lf", ret + 0.00001);
+	printf("%.3lf", ret);
 	return 0;
 }
