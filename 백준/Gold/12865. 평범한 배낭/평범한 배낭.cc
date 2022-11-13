@@ -4,29 +4,25 @@
 
 using namespace std;
 
-int N, K;
-vector<int> WEIGHT, VALUE;
-vector<vector<int>> dp;
+int N, K, DP[100001];
+vector<pair<int, int>> Vec;
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> N >> K;
 
-    WEIGHT = vector<int>(N + 1, 0);
-    VALUE = vector<int>(N + 1, 0);
-    dp = vector<vector<int>>(N + 1, vector<int>(K + 1, 0));
-    for (int n = 1; n <= N; ++n)
-        cin >> WEIGHT[n] >> VALUE[n];
+    Vec = vector<pair<int, int>>(N);
+    for (int n = 0; n < N; ++n)
+        cin >> Vec[n].first >> Vec[n].second;
 
-    for (int k = 1; k <= K; ++k) {
-        for (int w = 1; w <= N; ++w) {
-            if (WEIGHT[w] <= k)
-                dp[w][k] = max(dp[w - 1][k], dp[w - 1][k - WEIGHT[w]] + VALUE[w]);
-            else
-                dp[w][k] = dp[w - 1][k];
-        }
+    for (auto &vec: Vec) {
+        for (int i = K; i >= vec.first; --i)
+            DP[i] = max(DP[i], DP[i - vec.first] + vec.second);
     }
 
-    cout << dp[N][K] << endl;
-
+    cout << DP[K] << '\n';
     return 0;
 }
