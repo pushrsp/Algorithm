@@ -10,6 +10,8 @@ int N, M, C, DP[51][51][51][51];
 vector<vector<int>> Map;
 
 int go(int nowY, int nowX, int cnt, int prev) {
+    if (cnt < 0)
+        return 0;
     if (nowY > N || nowX > M)
         return 0;
     if (nowY == N && nowX == M) {
