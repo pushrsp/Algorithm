@@ -1,92 +1,107 @@
-#include <iostream>
-#include <vector>
 #include <string>
-#include <map>
-
-#define MAX 65536
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
-bool isValid(char a) {
-    if ('a' <= a && a <= 'z')
-        return true;
+const int MUL = 65536;
+
+void ToLower(string &s) {
+    for (char &c: s) {
+        if ('A' <= c && c <= 'Z')
+            c += 32;
+    }
+}
+
+bool RemoveIf(const string &s) {
+    for (char c: s) {
+        if (!('a' <= c && c <= 'z'))
+            return true;
+    }
+
     return false;
 }
 
-char toLower(char a) {
-    if (isValid(a))
-        return a;
+vector<string> MakeGroup(string &s) {
+    vector<string> ret;
+    for (int i = 0; i < s.size() - 1; i++) {
+        string temp;
+        temp += s[i];
+        temp += s[i + 1];
 
-    return a + 32;
+        ret.push_back(temp);
+    }
+
+    return ret;
 }
 
-int min(int a, int b) {
-    if (a < b)
-        return a;
-    return b;
+double GetGyo(unordered_map<string, int> a, unordered_map<string, int> b) {
+    double ret = 0;
+    for (const auto &iter: a) {
+        int n1 = iter.second;
+        auto t = b.find(iter.first);
+        if (t == b.end())
+            continue;
+
+        ret += min(n1, t->second);
+    }
+
+    return ret;
 }
 
-int max(int a, int b) {
-    if (a > b)
-        return a;
-    return b;
+double GetHap(unordered_map<string, int> &a, unordered_map<string, int> &b) {
+    double ret = 0;
+
+    for (const auto &iter: a) {
+        if (b.find(iter.first) == b.end())
+            ret += iter.second;
+    }
+
+    for (const auto &iter: b) {
+        if (a.find(iter.first) == a.end())
+            ret += iter.second;
+    }
+
+    for (const auto &iter: a) {
+        int n1 = iter.second;
+        auto t = b.find(iter.first);
+        if (t == b.end())
+            continue;
+
+        ret += max(n1, t->second);
+    }
+    return ret;
 }
 
-int solution(string a, string b) {
+int solution(string str1, string str2) {
     int answer = 0;
-    vector<string> total;
-    map<string, int> A, B;
 
-    for (int i = 0; i < a.size() - 1; ++i) {
-        char nowStr = a[i];
-        char nextStr = a[i + 1];
+    ToLower(str1);
+    ToLower(str2);
 
-        nowStr = toLower(nowStr);
-        nextStr = toLower(nextStr);
+    vector<string> g1 = MakeGroup(str1);
+    vector<string> g2 = MakeGroup(str2);
 
-        if (!isValid(nowStr) || !isValid(nextStr))
-            continue;
+    g1.erase(remove_if(g1.begin(), g1.end(), RemoveIf), g1.end());
+    g2.erase(remove_if(g2.begin(), g2.end(), RemoveIf), g2.end());
 
-        string s = "";
-        s += nowStr;
-        s += nextStr;
+    if (g1.empty() && g2.empty())
+        return MUL;
 
-        if (A[s] == 0)
-            total.push_back(s);
+    unordered_map<string, int> um1;
+    unordered_map<string, int> um2;
 
-        A[s]++;
-    }
+    for (auto &g: g1)
+        um1[g]++;
+    for (auto &g: g2)
+        um2[g]++;
 
-    for (int i = 0; i < b.size() - 1; ++i) {
-        char nowStr = b[i];
-        char nextStr = b[i + 1];
+    double hap = GetHap(um1, um2);
+    double gyo = GetGyo(um1, um2);
 
-        nowStr = toLower(nowStr);
-        nextStr = toLower(nextStr);
+    answer = (gyo / hap) * MUL;
 
-        if (!isValid(nowStr) || !isValid(nextStr))
-            continue;
-
-        string s = "";
-        s += nowStr;
-        s += nextStr;
-
-        if (A[s] == 0 && B[s] == 0)
-            total.push_back(s);
-
-        B[s]++;
-    }
-
-    if (total.empty())
-        return MAX;
-
-    int gyo = 0, hap = 0;
-    for (int i = 0; i < total.size(); ++i) {
-        gyo += min(A[total[i]], B[total[i]]);
-        hap += max(A[total[i]], B[total[i]]);
-    }
-
-    float d = (float) gyo / hap;
-    answer = d * MAX;
     return answer;
 }
