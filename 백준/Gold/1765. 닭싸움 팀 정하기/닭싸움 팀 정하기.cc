@@ -5,29 +5,8 @@
 
 using namespace std;
 
-int N, M;
-vector<int> Friends[1001], Enemies[1001];
-bool Visited[1001];
-
-void go(int node) {
-    Visited[node] = true;
-
-    for (int &e: Enemies[node]) {
-        for (int &ee: Enemies[e]) {
-            if (Visited[ee])
-                continue;
-
-            go(ee);
-        }
-    }
-
-    for (int &f: Friends[node]) {
-        if (Visited[f])
-            continue;
-
-        go(f);
-    }
-}
+int N, M, Discovered[1001];
+vector<pair<char, int>> Students[1001];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -42,21 +21,35 @@ int main() {
 
         cin >> c >> a >> b;
 
-        if (c == 'E')
-            Enemies[a].push_back(b), Enemies[b].push_back(a);
-        else
-            Friends[a].push_back(b), Friends[b].push_back(a);
+        Students[a].emplace_back(c, b);
+        Students[b].emplace_back(c, a);
     }
 
-    int ret = 0;
+    int answer = 0;
     for (int i = 1; i <= N; ++i) {
-        if (!Visited[i]) {
-            go(i);
-            ret++;
+        if (Discovered[i] != 1)
+            answer++;
+
+        Discovered[i] = 1;
+
+        for (auto &student: Students[i]) {
+            if (student.first == 'E') {
+                for (auto &ee: Students[student.second]) {
+                    if (Discovered[ee.second] == 0 && ee.first == 'E')
+                        Discovered[ee.second] = 1;
+                }
+            } else {
+                if (Discovered[student.second] == 0)
+                    Discovered[student.second] = 1;
+
+                for (auto &ff: Students[student.second]) {
+                    if (Discovered[ff.second] == 0 && ff.first == 'F')
+                        Discovered[ff.second] = 1;
+                }
+            }
         }
     }
 
-    cout << ret << '\n';
-
+    cout << answer << '\n';
     return 0;
 }
