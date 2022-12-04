@@ -12,13 +12,6 @@ bool Visited[1001];
 void go(int node) {
     Visited[node] = true;
 
-    for (int &f: Friends[node]) {
-        if (Visited[f])
-            continue;
-
-        go(f);
-    }
-
     for (int &e: Enemies[node]) {
         for (int &ee: Enemies[e]) {
             if (Visited[ee])
@@ -26,6 +19,13 @@ void go(int node) {
 
             go(ee);
         }
+    }
+
+    for (int &f: Friends[node]) {
+        if (Visited[f])
+            continue;
+
+        go(f);
     }
 }
 
