@@ -56,6 +56,13 @@ void Di(int start, int dest) {
             int next_price = Price[now.node][i].second + now.price;
 
             if (next_price <= M && next_dist < DP[next_node][next_price]) {
+                for (int j = next_price + 1; j <= M; j++) {
+                    if (DP[next_node][j] <= next_dist)
+                        break;
+
+                    DP[next_node][j] = next_dist;
+                }
+                
                 DP[next_node][next_price] = next_dist;
                 pq.push({next_node, next_price, next_dist});
             }
