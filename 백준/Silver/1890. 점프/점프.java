@@ -1,74 +1,64 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int N;
-	static int[][] map;
-	static long[][] dp;
+    private static int N;
+    private static int[][] Map;
+    private static long[][] DP;
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
+    private static boolean InRange(int nowY, int nowX) {
+        return 0 <= nowY && nowY <= N && 0 <= nowX && nowX <= N;
+    }
 
-		N = Integer.parseInt(br.readLine());
-		map = new int[N + 1][N + 1];
+    //아래 오른쪽
+    private static long go(int nowY, int nowX) {
+        if (DP[nowY][nowX] != -1)
+            return DP[nowY][nowX];
+        if (nowY == N && nowX == N)
+            return 1;
 
-		for (int i = 1; i <= N; i++) {
-			st = new StringTokenizer(br.readLine());
+        DP[nowY][nowX] = 0;
 
-			for (int j = 1; j <= N; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
-			}
-		}
+        int nextY = nowY + Map[nowY][nowX];
+        int nextX = nowX + Map[nowY][nowX];
 
-		dp = new long[N + 1][N + 1];
-		for (int i = 1; i <= N; i++) {
-			for (int j = 1; j <= N; j++) {
-				dp[i][j] = -1;
-			}
-		}
+        if (nextY > N && nextX > N)
+            return 0;
 
-		bw.write(DFS(1, 1) + "\n");
-		bw.flush();
-		bw.close();
-		br.close();
-	}
+        if (nextY <= N)
+            DP[nowY][nowX] += go(nowY + Map[nowY][nowX], nowX);
+        if (nextX <= N)
+            DP[nowY][nowX] += go(nowY, nowX + Map[nowY][nowX]);
 
-	public static long DFS(int x, int y) {
-		if (dp[x][y] != -1) {
-			return dp[x][y];
-		}
+        return DP[nowY][nowX];
+    }
 
-		if (x == N && y == N) {
-			return 1;
-		}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st;
 
-		dp[x][y] = 0;
+        N = Integer.parseInt(br.readLine());
 
-		int dx = x + map[x][y];
-		int dy = y + map[x][y];
+        Map = new int[N + 1][N + 1];
+        for (int y = 1; y <= N; y++) {
+            st = new StringTokenizer(br.readLine());
 
-		// 아래와 오른쪽 이동이 모두 불가한 경우
-		if (dx > N && dy > N) {
-			return 0;
-		}
+            for (int x = 1; x <= N; x++) {
+                Map[y][x] = Integer.parseInt(st.nextToken());
+            }
+        }
 
-		// 아래로 내려갈 수 있는 경우
-		if (dx <= N) {
-			dp[x][y] = Math.max(dp[x][y], dp[x][y] + DFS(x + map[x][y], y));
-		}
+        DP = new long[N + 1][N + 1];
+        for (int y = 1; y <= N; y++) {
+            for (int x = 1; x <= N; x++) {
+                DP[y][x] = -1;
+            }
+        }
 
-		// 오른쪽으로 갈 수 있는 경우
-		if (dy <= N) {
-			dp[x][y] = Math.max(dp[x][y], dp[x][y] + DFS(x, y + map[x][y]));
-		}
-
-		return dp[x][y];
-	}
-
+        bw.write(go(1, 1) + "\n");
+        bw.flush();
+        bw.close();
+        br.close();
+    }
 }
