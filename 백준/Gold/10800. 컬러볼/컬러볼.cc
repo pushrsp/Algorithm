@@ -42,10 +42,13 @@ int main() {
         Weight[w] += w;
         sum += w;
 
-        Answer[i] = sum - Color[c] - Weight[w] + w;
-
-        if(n != 0 && Balls[n - 1].c == c && Balls[n - 1].w == w)
+        //크기와 색깔이 모두 같은 경우
+        if(n != 0 && Balls[n - 1].c == c && Balls[n - 1].w == w) {
             Answer[i] = Answer[Balls[n - 1].i];
+            continue;
+        }
+
+        Answer[i] = sum - Color[c] - Weight[w] + w;
     }
 
     for (int i = 0; i < N; ++i)
