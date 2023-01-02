@@ -1,119 +1,91 @@
-#include<iostream>
-#include<vector>
-#include<cmath>
-#include<algorithm>
- 
-#define endl "\n"
-#define MAX 1010
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <algorithm>
+
+#define MAX 1001
+
 using namespace std;
- 
-int N, M;
-int Parent[MAX];
-double Answer;
+
+struct Node {
+    double dist;
+    int y, x;
+
+    bool operator<(const Node &other) const {
+        return dist < other.dist;
+    }
+};
+
+int N, M, Parent[MAX];
 vector<pair<int, int>> Coord;
-vector<pair<int, int>> Connect;
-vector<pair<double, pair<int, int>>> Edge;
- 
-void Input()
-{
+vector<pair<int, int>> Connected;
+vector<Node> Dist;
+
+int GetParent(int x) {
+    if (Parent[x] == x)
+        return x;
+
+    return Parent[x] = GetParent(Parent[x]);
+}
+
+void Union(int a, int b) {
+    a = GetParent(a), b = GetParent(b);
+
+    if (a < b)
+        Parent[b] = a;
+    else
+        Parent[a] = b;
+}
+
+double GetDist(int y1, int x1, int y2, int x2) {
+    return ::sqrt(::pow(y1 - y2, 2) + ::pow(x1 - x2, 2));
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
     cin >> N >> M;
-    for (int i = 1; i <= N; i++) Parent[i] = i;
-    for (int i = 0; i < N; i++)
-    {
-        int a, b; cin >> a >> b;
-        Coord.push_back(make_pair(a, b));
+
+    Coord = vector<pair<int, int>>(N);
+    Connected = vector<pair<int, int>>(M);
+
+    for (int i = 1; i <= N; ++i)
+        Parent[i] = i;
+
+    for (int i = 0; i < N; ++i)
+        cin >> Coord[i].first >> Coord[i].second;
+    for (int i = 0; i < M; ++i)
+        cin >> Connected[i].first >> Connected[i].second;
+
+    for (auto &connected: Connected) {
+        if (GetParent(connected.first) != GetParent(connected.second))
+            Union(connected.first, connected.second);
     }
-    for (int i = 0; i < M; i++)
-    {
-        int a, b; cin >> a >> b;
-        Connect.push_back(make_pair(a, b));
-    }
-}
- 
-int Find_Parent(int A)
-{
-    if (A == Parent[A]) return A;
-    return Parent[A] = Find_Parent(Parent[A]);
-}
- 
-bool Same_Parent(int A, int B)
-{
-    A = Find_Parent(A);
-    B = Find_Parent(B);
-    if (A == B) return true;
-    return false;
-}
- 
-void Union(int A, int B)
-{
-    A = Find_Parent(A);
-    B = Find_Parent(B);
-    Parent[B] = A;
-}
- 
-double Find_Distance(int x, int y, int xx, int yy)
-{
-    double dx = pow(x - xx, 2);
-    double dy = pow(y - yy, 2);
-    double Dist = sqrt(dx + dy);
- 
-    return Dist;
-}
- 
-void Solution()
-{
-    for (int i = 0; i < M; i++)
-    {
-        int N1 = Connect[i].first;
-        int N2 = Connect[i].second;
- 
-        if (Same_Parent(N1, N2) == false) Union(N1, N2);
-    }
-    for (int i = 0; i < N - 1; i++)
-    {
-        int x = Coord[i].first;
-        int y = Coord[i].second;
-        for (int j = i + 1; j < N; j++)
-        {
-            int xx = Coord[j].first;
-            int yy = Coord[j].second;
- 
-            double Dist = Find_Distance(x, y, xx, yy);
-            Edge.push_back(make_pair(Dist, make_pair(i + 1, j + 1)));
+
+    for (int i = 0; i < N; ++i) {
+        int y1 = Coord[i].first, x1 = Coord[i].second;
+
+        for (int j = i + 1; j < N; ++j) {
+            int y2 = Coord[j].first, x2 = Coord[j].second;
+
+            Dist.push_back({GetDist(y1, x1, y2, x2), i + 1, j + 1});
         }
     }
-    sort(Edge.begin(), Edge.end());
-    for (int i = 0; i < Edge.size(); i++)
-    {
-        int N1 = Edge[i].second.first;
-        int N2 = Edge[i].second.second;
-        double Dist = Edge[i].first;
- 
-        if (Same_Parent(N1, N2) == false)
-        {
-            Union(N1, N2);
-            Answer = Answer + Dist;
+
+    sort(Dist.begin(), Dist.end());
+
+    double ret = 0;
+    for (auto &dist: Dist) {
+        if (GetParent(dist.y) != GetParent(dist.x)) {
+            ret += dist.dist;
+            Union(dist.y, dist.x);
         }
     }
-    cout << Answer << endl;
-}
- 
-void Solve()
-{
-    Input();
-    Solution();
-}
- 
-int main(void)
-{
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+
     cout << fixed;
     cout.precision(2);
- 
-    //freopen("Input.txt", "r", stdin);
-    Solve();
- 
+    cout << ret << '\n';
+    
     return 0;
 }
