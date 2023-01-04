@@ -1,52 +1,52 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <iostream>
 #include <queue>
+#include <cmath>
+#include <algorithm>
+
+#define MAX 18
 
 using namespace std;
 
-int answer = 0;
-vector<vector<int>> Tree;
-vector<int> Info;
-vector<bool> Visited(131073, false);
+int Answer = 0;
+bool Visited[MAX][(1 << (MAX - 1)) + 1];
+vector<int> Info, Adj[MAX];
 
-void dfs(int sheep, int wolf, int idx, int visited) {
-    if (Info[idx])
-        wolf++;
-    else
-        sheep++;
+void go(int wolf, int sheep, int node, int visited) {
+    Answer = max(Answer, sheep);
 
-    answer = max(answer, sheep);
-    if (wolf >= sheep)
-        return;
+    for (auto &next: Adj[node]) {
+        int next_wolf = wolf, next_sheep = sheep;
+        if (!(visited & (1 << next))) {
+            if (Info[next])
+                next_wolf += 1;
+            else
+                next_sheep += 1;
+        }
 
-    for (int i = 0; i < Info.size(); ++i) {
-        if (!(visited & (1 << i)))
+        if (next_wolf >= next_sheep)
+            continue;
+        if (Visited[next][visited | (1 << next)])
             continue;
 
-        for (auto &child: Tree[i]) {
-            int nextVisited = visited | (1 << child);
-
-            if (Visited[nextVisited])
-                continue;
-
-            Visited[nextVisited] = true;
-            dfs(sheep, wolf, child, nextVisited);
-        }
+        Visited[next][visited | (1 << next)] = true;
+        go(next_wolf, next_sheep, next, visited | (1 << next));
     }
 }
 
 int solution(vector<int> info, vector<vector<int>> edges) {
     Info = info;
-    Tree = vector<vector<int>>(info.size());
+
     for (auto &edge: edges) {
-        Tree[edge[0]].push_back(edge[1]);
-        Tree[edge[1]].push_back(edge[0]);
+        Adj[edge[0]].push_back(edge[1]);
+        Adj[edge[1]].push_back(edge[0]);
     }
 
-    Visited[1 << 0] = true;
-    dfs(0, 0, 0, (1 << 0));
+    if (Info[0] == 0)
+        Answer = 1;
+    
+    go(0, 0, 0, 0);
 
-    return answer;
+    return Answer;
 }
