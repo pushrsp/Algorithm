@@ -1,44 +1,35 @@
 #include <string>
-#include <cstring>
 #include <vector>
 #include <iostream>
-#include <algorithm>
 #include <queue>
-#include <sstream>
-#include <vector>
-#include <unordered_map>
-#include <deque>
-#include <set>
+#include <cmath>
+#include <algorithm>
+
+#define MAX 100001
 
 using namespace std;
 
-#define ll long long
-
 struct Trie {
-    Trie() : Node(), child(0) {
-    }
-
     void Add(string &s) {
         Trie *curr = this;
 
         for (char c: s) {
             curr->child++;
-            if (curr->Node[c - 'a'] == nullptr)
-                curr->Node[c - 'a'] = new Trie();
+            if (curr->nodes[c - 'a'] == nullptr)
+                curr->nodes[c - 'a'] = new Trie();
 
-            curr = curr->Node[c - 'a'];
+            curr = curr->nodes[c - 'a'];
         }
-
-        curr->child++;
     }
 
     int Find(string &s) {
         Trie *curr = this;
-        for (char &c: s) {
+
+        for (char c: s) {
             if (c == '?')
                 return curr->child;
 
-            curr = curr->Node[c - 'a'];
+            curr = curr->nodes[c - 'a'];
             if (curr == nullptr)
                 return 0;
         }
@@ -46,27 +37,26 @@ struct Trie {
         return curr->child;
     }
 
-    int child;
-    Trie *Node[26];
+    Trie *nodes[26];
+    int child = 0;
 };
 
-Trie TrieRoot[10000];
-Trie ReTrieRoot[10000];
+Trie Nodes1[MAX], Nodes2[MAX];
 
 vector<int> solution(vector<string> words, vector<string> queries) {
-    vector<int> answer;
     for (auto word: words) {
-        TrieRoot[word.length() - 1].Add(word);
+        Nodes1[word.length() - 1].Add(word);
         reverse(word.begin(), word.end());
-        ReTrieRoot[word.length() - 1].Add(word);
+        Nodes2[word.length() - 1].Add(word);
     }
 
+    vector<int> answer;
     for (auto query: queries) {
         if (query[0] != '?') {
-            answer.push_back(TrieRoot[query.length() - 1].Find(query));
+            answer.push_back(Nodes1[query.length() - 1].Find(query));
         } else {
             reverse(query.begin(), query.end());
-            answer.push_back(ReTrieRoot[query.length() - 1].Find(query));
+            answer.push_back(Nodes2[query.length() - 1].Find(query));
         }
     }
 
