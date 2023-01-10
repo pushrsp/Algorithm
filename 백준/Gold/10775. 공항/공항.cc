@@ -1,37 +1,48 @@
 #include <iostream>
+#include <vector>
+
+#define MAX 100001
 
 using namespace std;
 
-int G, P;
-int GATE[100001] = {0};
+int G, P, Airplanes[MAX], Parent[MAX];
 
-int find(int g) {
-    if (GATE[g] == g)
-        return g;
+int GetParent(int i) {
+    if (Parent[i] == i)
+        return i;
 
-    return GATE[g] = find(GATE[g]);
+    return Parent[i] = GetParent(Parent[i]);
+}
+
+void Union(int a, int b) {
+    a = GetParent(a), b = GetParent(b);
+    if (a != b)
+        Parent[a] = b;
 }
 
 int main() {
-    cin >> G >> P;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
+    cin >> G;
+    cin >> P;
+
+    for (int i = 1; i <= P; ++i)
+        cin >> Airplanes[i];
 
     for (int i = 1; i <= G; ++i)
-        GATE[i] = i;
+        Parent[i] = i;
 
-    int cnt = 0;
-    for (int i = 0; i < P; ++i) {
-        int g;
-        cin >> g;
-
-        int found = find(g);
-        if (found == 0) {
+    int ret = 0;
+    for (int i = 1; i <= P; ++i) {
+        int parent = GetParent(Airplanes[i]);
+        if (parent == 0)
             break;
-        } else {
-            cnt++;
-            GATE[found] = find(found - 1);
-        }
+
+        Union(parent, parent - 1);
+        ret += 1;
     }
 
-    cout << cnt << endl;
+    cout << ret << '\n';
     return 0;
 }
