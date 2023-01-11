@@ -1,63 +1,46 @@
 #include <iostream>
-#include <vector>
-#include <tuple>
 #include <algorithm>
+#include <vector>
 #include <queue>
+#include <cmath>
 
 using namespace std;
 
-int N, L, P;
-vector<pair<int, int>> Stations;
-
-vector<int> get_best(int p, int idx) {
-    vector<int> ret = {-1, -1, -1};
-    for (int i = idx; i < N + 1; ++i) {
-        if (Stations[i].first <= p && ret[1] < Stations[i].second) {
-            ret[0] = Stations[i].first;
-            ret[1] = Stations[i].second;
-            ret[2] = i;
-        }
-    }
-
-    return ret;
-}
+int N;
 
 int main() {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+    cin.tie(NULL), cout.tie(NULL);
 
     cin >> N;
 
-    Stations = vector<pair<int, int>>(N);
-    for (int n = 0; n < N; ++n)
-        cin >> Stations[n].first >> Stations[n].second;
+    vector<pair<int, int>> fuel(N + 1);
+    for (int i = 0; i < N; ++i)
+        cin >> fuel[i].first >> fuel[i].second;
 
-    cin >> L >> P;
+    int p;
+    cin >> fuel[N].first >> p;
 
-    sort(Stations.begin(), Stations.end());
+    sort(fuel.begin(), fuel.end());
 
-    int idx = 0, cnt = 0;
-    priority_queue<int, vector<int>, less<int>> pq;
-    while (L > P) {
-        while (idx < N && Stations[idx].first <= P) {
-            pq.push(Stations[idx].second);
-            idx++;
-        }
+    priority_queue<pair<int, int>, vector<pair<int, int>>, less<pair<int, int>>> pq;
+    int ret = 0;
+    for (int i = 0; i <= N; ++i) {
+        while (fuel[i].first > p) {
+            if (pq.empty()) {
+                cout << -1 << '\n';
+                return 0;
+            }
 
-        if (!pq.empty()) {
-            P += pq.top();
+            p += pq.top().first;
             pq.pop();
-            cnt++;
-        } else {
-            break;
+            ret += 1;
         }
+
+        pq.emplace(fuel[i].second, fuel[i].first);
     }
 
-    if (P >= L)
-        cout << cnt << '\n';
-    else
-        cout << -1 << '\n';
+    cout << ret << '\n';
 
     return 0;
 }

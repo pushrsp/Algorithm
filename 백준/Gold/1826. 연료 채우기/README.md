@@ -1,4 +1,4 @@
-# [Gold III] 연료 채우기 - 1826 
+# [Gold II] 연료 채우기 - 1826 
 
 [문제 링크](https://www.acmicpc.net/problem/1826) 
 
