@@ -1,51 +1,59 @@
-#include<iostream>
-#include<set>
-#include<algorithm>
+#include <iostream>
+#include <algorithm>
+#include <set>
 
-#define f(i, l, r) for(int i=l;i<=r;++i)
+#define MAX 1000001
+
 using namespace std;
 
-const int LEN = 1e6 + 1;
-int n, m, ans[LEN], a[LEN];
+int Z, N, M;
+int Weather[MAX], Prev[MAX], Answer[MAX];
 
-bool go() {
+bool Search() {
+    fill(Answer, Answer + MAX, 0);
+    fill(Prev, Prev + MAX, 0);
     set<int> s;
-    f(i, 1, m) {
-        int t;
-        cin >> t;
-        if (t == 0) {
-            s.insert(i);
-            ans[i] = 0;
-        } else {
-            set<int>::iterator it = s.upper_bound(a[t]);
-            if (it == s.end()) {
-                while (m-- > i)cin >> t;
-                return false;
-            }
 
-            ans[*it] = t;
-            a[t] = i;
+    for (int i = 0; i < M; ++i) {
+        if (Weather[i]) {
+            auto it = s.lower_bound(Prev[Weather[i]]);
+            if (it == s.end())
+                return false;
+
+            int index = *it;
+            Answer[index] = Weather[i];
+            Prev[Weather[i]] = i;
             s.erase(it);
+        } else {
+            s.insert(i);
         }
     }
+
     return true;
 }
 
 int main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    int z;
-    cin >> z;
-    while (z--) {
-        cin >> n >> m;
-        f(i, 1, m)a[i] = ans[i] = -1;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
 
-        if (go()) {
-            cout << "YES\n";
-            f(i, 1, m)if (ans[i] != -1)cout << ans[i] << ' ';
+    cin >> Z;
+    while (Z--) {
+        cin >> N >> M;
+
+        for (int i = 0; i < M; ++i)
+            cin >> Weather[i];
+
+        if (Search()) {
+            cout << "YES" << '\n';
+            for (int i = 0; i < M; ++i) {
+                if (!Weather[i])
+                    cout << Answer[i] << ' ';
+            }
             cout << '\n';
-        } else cout << "NO\n";
+        } else {
+            cout << "NO" << '\n';
+        }
     }
+
     return 0;
 }

@@ -4,11 +4,11 @@
 
 ### 성능 요약
 
-메모리: 23960 KB, 시간: 1692 ms
+메모리: 27868 KB, 시간: 1624 ms
 
 ### 분류
 
-자료 구조(data_structures), 그리디 알고리즘(greedy), 우선순위 큐(priority_queue)
+자료 구조(data_structures), 그리디 알고리즘(greedy), 우선순위 큐(priority_queue), 트리를 사용한 집합과 맵(tree_set)
 
 ### 문제 설명
 
