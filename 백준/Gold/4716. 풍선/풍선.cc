@@ -1,49 +1,75 @@
-#include <bits/stdc++.h>
-#define rep(i, n) for (int i = 0; i < n; ++i)
-#define REP(i, n) for (int i = 1; i <= n; ++i)
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <string>
+#include <algorithm>
+
+#define ll long long
+#define MAX 1001
+#define INF 987654321
+
 using namespace std;
 
-typedef pair<int, int> pii;
+struct Team {
+    int b, da, db;
 
-int N, A, B;
-int want[1000];
-int distA[1000];
-int distB[1000];
-signed main() {
-#ifndef ONLINE_JUDGE
-    freopen("in", "r", stdin);
-    freopen("out", "w", stdout);
-#endif
-    cin.tie(NULL);
-    cout.tie(NULL);
-    ios::sync_with_stdio(false);
+    bool operator<(const Team &other) const {
+        return ::abs(da - db) < ::abs(other.da - other.db);
+    }
+};
 
-    while (1) {
-        priority_queue<pii> pq;
-        int ans = 0;
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
+    while (true) {
+        int N, A, B;
         cin >> N >> A >> B;
+
         if (N == 0 && A == 0 && B == 0)
             break;
 
-        rep(i, N) {
-            cin >> want[i] >> distA[i] >> distB[i];
-            pq.emplace(abs(distA[i] - distB[i]), i);
+        priority_queue<Team> pq;
+        int b, da, db;
+        for (int i = 0; i < N; ++i) {
+            cin >> b >> da >> db;
+            pq.push({b, da, db});
         }
+
+        int ret = 0;
         while (!pq.empty()) {
-            auto [gap, here] = pq.top();
+            auto now = pq.top();
             pq.pop();
-            // cout << "here: " << here << '\n';
-            int& getfrom = (distA[here] > distB[here] ? B : A);
-            // cout << "getfrom: " << getfrom << '\n';
-            if (getfrom) {
-                int cnt = min(getfrom, want[here]);
-                getfrom -= cnt;
-                want[here] -= cnt;
-                ans += cnt * min(distA[here], distB[here]);
+
+            if (now.da < now.db) {
+                if (A - now.b < 0) {
+                    ret += A * now.da;
+                    now.b -= A;
+                    A = 0;
+
+                    ret += now.b * now.db;
+                    B -= now.b;
+                } else {
+                    A -= now.b;
+                    ret += now.b * now.da;
+                }
+            } else {
+                if (B - now.b < 0) {
+                    ret += B * now.db;
+                    now.b -= B;
+                    B = 0;
+
+                    ret += now.b * now.da;
+                    A -= now.b;
+                } else {
+                    B -= now.b;
+                    ret += now.b * now.db;
+                }
             }
-            ans += max(distA[here], distB[here]) * want[here];
         }
-        cout << ans << '\n';
+
+        cout << ret << '\n';
     }
+
     return 0;
 }
