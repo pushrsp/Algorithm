@@ -1,30 +1,31 @@
-#include <algorithm>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <queue>
+
+#define ll long long
 
 using namespace std;
 
-long long solution(int n, vector<int> times) {
-    long long answer = 0;
-    sort(times.begin(), times.end());
+ll solution(int n, vector<int> times) {
+    ll left = 1, right = 0, mid, cap;
+    for (int &t: times)
+        right = max(right, static_cast<ll>(t));
 
-    long long min = 1;
-    long long max = n * (long long)times.back();
+    right *= n;
 
-    while (min <= max) {
+    while (left < right) {
+        mid = (left + right) / 2;
+        cap = 0;
 
-        long long avg = (max + min) / 2;
-        long long tmp = 0;
+        for (int &t: times)
+            cap += mid / static_cast<ll>(t);
 
-        for (int i = 0; i < times.size(); i++) {
-            tmp += (avg / (long long) times[i]);
-        }
-
-        if (tmp >= n) {
-            max = avg - 1;
-            answer = avg;
-        }
-        else min = avg + 1;
+        if (cap >= n)
+            right = mid;
+        else
+            left = mid + 1;
     }
-    return answer;
+
+    return right;
 }
