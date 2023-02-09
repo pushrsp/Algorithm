@@ -1,88 +1,72 @@
 #include <iostream>
-#include <vector>
 #include <queue>
 #include <algorithm>
-#include <cstring>
+#include <vector>
+#include <cmath>
 
-#define fasti ios_base::sync_with_stdio(false); cin.tie(0);
-#define fastio ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define INF 1e9+7
-#define pii pair<int, int>
-
-typedef long long ll;
-// typedef pair<int, int> pii;
+#define MAX 10001
 
 using namespace std;
 
-int cost[10001];
-int dp[10001][2];
-int N;
-bool visited[10001];
-vector<int> Tree[10001];
+int N, Arr[MAX], DP[MAX][2];
+vector<int> Adj[MAX];
+bool Visited[MAX];
 vector<int> Path;
 
-void input() {
-    cin >> N;
-    for (int i = 1; i <= N; i++) {
-        cin >> cost[i];
-    }
+void go(int n) {
+    Visited[n] = true;
 
-    int a, b;
-    for (int i = 1; i < N; i++) {
-        cin >> a >> b;
-        Tree[a].push_back(b);
-        Tree[b].push_back(a);
-    }
-}
+    DP[n][1] = Arr[n], DP[n][0] = 0;
+    for (auto &next: Adj[n]) {
+        if (Visited[next])
+            continue;
 
-void dfs(int now) {
-    // now가 독립집합에 포함될 때
-    // 포함되지 않을 때
-    dp[now][0] = 0;
-    dp[now][1] = cost[now];
+        go(next);
 
-    visited[now] = true;
-
-    for (int i = 0; i < Tree[now].size(); i++) {
-        int next = Tree[now][i];
-        if (visited[next]) continue;
-
-        dfs(next);
-        dp[now][0] += max(dp[next][0], dp[next][1]);
-        dp[now][1] += dp[next][0];
+        DP[n][0] += max(DP[next][0], DP[next][1]);
+        DP[n][1] += DP[next][0];
     }
 }
 
-void tracing(int now, int prev) {
-    if (dp[now][1] > dp[now][0] && !visited[prev]) {
-        Path.push_back(now);
-        visited[now] = true;
+void trace(int n, int p) {
+    if (DP[n][1] > DP[n][0] && !Visited[p]) {
+        Path.push_back(n);
+        Visited[n] = true;
     }
 
-    for (int i = 0; i < Tree[now].size(); i++) {
-        int next = Tree[now][i];
-        if (next == prev) continue;
-        tracing(next, now);
-    }
-}
+    for (int i = 0; i < Adj[n].size(); ++i) {
+        if (Adj[n][i] == p)
+            continue;
 
-void solve() {
-    dfs(1);
-    memset(visited, 0, sizeof(visited));
-    tracing(1, 0);
-
-    sort(Path.begin(), Path.end());
-
-    cout << max(dp[1][0], dp[1][1]) << "\n";
-    for (auto &w: Path) {
-        cout << w << " ";
+        trace(Adj[n][i], n);
     }
 }
 
 int main() {
-    fastio
-    input();
-    solve();
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
+    cin >> N;
+    for (int i = 1; i <= N; ++i)
+        cin >> Arr[i];
+
+    int v, e;
+    for (int i = 0; i < N - 1; ++i) {
+        cin >> v >> e;
+
+        Adj[v].push_back(e);
+        Adj[e].push_back(v);
+    }
+
+    go(1);
+    fill(Visited, Visited + MAX, false);
+    trace(1, 0);
+
+    sort(Path.begin(), Path.end());
+
+    cout << max(DP[1][0], DP[1][1]) << '\n';
+    for (int &p: Path)
+        cout << p << ' ';
 
     return 0;
 }
