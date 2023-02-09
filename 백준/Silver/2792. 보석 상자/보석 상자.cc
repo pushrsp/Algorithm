@@ -1,49 +1,42 @@
 #include <iostream>
 #include <vector>
 
+#define MAX 300001
+
 using namespace std;
 
-#define ll long long
-
-ll N, M, Arr[300001];
-
-bool is_valid(ll mid) {
-    ll cmp = 0;
-    for (int m = 0; m < M; ++m) {
-        cmp += Arr[m] / mid;
-
-        if (Arr[m] % mid)
-            cmp++;
-    }
-
-    return cmp <= N;
-}
+int N, M, Arr[MAX];
 
 int main() {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+    cin.tie(NULL), cout.tie(NULL);
 
     cin >> N >> M;
 
-    ll left = 1, right = 0, mid = 0;
-    for (int m = 0; m < M; ++m) {
-        cin >> Arr[m];
-        right = max(right, Arr[m]);
+    int left = 1, right = 0, mid, cap;
+    for (int i = 0; i < M; ++i) {
+        cin >> Arr[i];
+        right = max(right, Arr[i]);
     }
 
-    ll ret = INT32_MAX;
-    while (left <= right) {
+    while (left < right) {
         mid = (left + right) / 2;
+        cap = 0;
 
-        if (is_valid(mid)) {
-            ret = min(ret, mid);
-            right = mid - 1;
-        } else {
+        for (int i = 0; i < M; ++i) {
+            cap += Arr[i] / mid;
+            if (Arr[i] % mid)
+                cap += 1;
+        }
+
+        if (cap > N) {
             left = mid + 1;
+        } else {
+            right = mid;
         }
     }
 
-    cout << ret << '\n';
+    cout << right << '\n';
+
     return 0;
 }
