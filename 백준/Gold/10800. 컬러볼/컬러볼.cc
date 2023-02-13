@@ -7,52 +7,47 @@
 using namespace std;
 
 struct Ball {
-    int w, c, i;
+    int index, color, size;
+
+    bool operator<(const Ball &other) const {
+//        if (size == other.size)
+//            return index < other.index;
+
+        return size < other.size;
+    }
 };
 
-int N, Color[MAX], Weight[MAX], Answer[MAX];
-vector<Ball> Balls;
-
-bool cmp_ball(const Ball& a, const Ball& b) {
-    if(a.w == b.w)
-        return a.c < b.c;
-
-    return a.w < b.w;
-}
+int N, DP[MAX], Ret[MAX];
 
 int main() {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL),cout.tie(NULL);
+    cin.tie(NULL), cout.tie(NULL);
 
     cin >> N;
-    Balls = vector<Ball>(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> Balls[i].c >> Balls[i].w;
 
-        Balls[i].i = i;
+    vector<Ball> vec;
+    int c, s;
+    for (int i = 0; i < N; ++i) {
+        cin >> c >> s;
+
+        vec.push_back({i, c, s});
     }
 
-    sort(Balls.begin(), Balls.end(), cmp_ball);
+    sort(vec.begin(), vec.end());
 
-    int sum = 0;
-    for (int n = 0; n < N; ++n) {
-        int w = Balls[n].w, c = Balls[n].c, i = Balls[n].i;
-
-        Color[c] += w;
-        Weight[w] += w;
-        sum += w;
-
-        //크기와 색깔이 모두 같은 경우
-        if(n != 0 && Balls[n - 1].c == c && Balls[n - 1].w == w) {
-            Answer[i] = Answer[Balls[n - 1].i];
-            continue;
+    int sum = 0, j = 0;
+    for (int i = 0; i < N; ++i) {
+        while (vec[i].size > vec[j].size) {
+            sum += vec[j].size;
+            DP[vec[j].color] += vec[j].size;
+            j++;
         }
 
-        Answer[i] = sum - Color[c] - Weight[w] + w;
+        Ret[vec[i].index] = sum - DP[vec[i].color];
     }
 
     for (int i = 0; i < N; ++i)
-        cout << Answer[i] << '\n';
+        cout << Ret[i] << '\n';
 
     return 0;
 }
