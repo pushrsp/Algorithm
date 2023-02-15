@@ -1,56 +1,66 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
+#include <algorithm>
 
-#define MAX 99999
+#define MAX 100001
+#define INF 987654321
 
 using namespace std;
 
-int N, ANSWER = MAX;
-string source, dest, temp;
+int N;
+string Answer;
 
-void turn_on(int idx) {
-    if (idx > 0)
-        temp[idx - 1] = temp[idx - 1] == '1' ? '0' : '1';
+void Change(string &s, int i) {
+    s[i] == '0' ? s[i] = '1' : s[i] = '0';
 
-    temp[idx] = temp[idx] == '1' ? '0' : '1';
+    if (i - 1 >= 0)
+        s[i - 1] == '0' ? s[i - 1] = '1' : s[i - 1] = '0';
 
-    if (idx < N - 1)
-        temp[idx + 1] = temp[idx + 1] == '1' ? '0' : '1';
+    if (i + 1 < N)
+        s[i + 1] == '0' ? s[i + 1] = '1' : s[i + 1] = '0';
 }
 
-void solve(bool turn) {
-    temp = source;
+int go(int i, string &s, int count) {
+    if (i == N)
+        return s == Answer ? count : INF;
 
-    int cnt = 0;
-    if (turn) {
-        temp[0] = temp[0] == '1' ? '0' : '1';
-        temp[1] = temp[1] == '1' ? '0' : '1';
-        cnt++;
+    int ret;
+    if (s[i - 1] == Answer[i - 1]) {
+        ret = go(i + 1, s, count);
+    } else {
+        Change(s, i);
+        ret = go(i + 1, s, count + 1);
     }
 
-    for (int i = 1; i < N; ++i) {
-        if (temp[i - 1] != dest[i - 1]) {
-            turn_on(i);
-            cnt++;
-        }
-    }
-
-    if (temp == dest)
-        ANSWER = min(ANSWER, cnt);
+    return ret;
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
     cin >> N;
-    cin >> source;
-    cin >> dest;
 
-    solve(true);
-    solve(false);
+    string s;
+    cin >> s;
+    cin >> Answer;
 
-    if (ANSWER != MAX)
-        cout << ANSWER << endl;
+    if (s == Answer) {
+        cout << 0 << '\n';
+        return 0;
+    }
+
+    string temp = s;
+    int ret = go(1, s, 0);
+    if (ret == INF) {
+        Change(temp, 0);
+        ret = go(1, temp, 1);
+    }
+
+    if (ret == INF)
+        cout << -1 << '\n';
     else
-        cout << -1 << endl;
+        cout << ret << '\n';
+
     return 0;
 }
