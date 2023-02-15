@@ -2,44 +2,43 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <set>
+#include <queue>
 
 #define MAX 1001
 
 using namespace std;
 
-int N, M;
-unordered_map<string, string> Parent;
+struct Person {
+    string name;
+    vector<string> children;
+
+    bool operator<(const Person &other) const {
+        return name < other.name;
+    }
+};
+
+int N, M, InDegree[MAX];
 unordered_map<string, int> StrToIdx;
 unordered_map<int, string> IdxToStr;
-vector<int> Adj[MAX];
-vector<string> Child[MAX];
-bool Visited[MAX];
+vector<int> Adj[MAX], Answer[MAX];
 
-string GetParent(string s) {
-    if (s == Parent[s])
-        return s;
+void Sort(int start) {
+    queue<int> q;
 
-    return Parent[s] = GetParent(Parent[s]);
-}
+    q.push(start);
 
-bool cmp(const int &a, const int &b) {
-    return Adj[a].size() > Adj[b].size();
-}
+    while (!q.empty()) {
+        int cur = q.front();
+        q.pop();
 
-bool cmp_str(const string &a, const string &b) {
-    return a < b;
-}
+        for (int &next: Adj[cur]) {
+            InDegree[next]--;
 
-void go(int now) {
-    Visited[now] = true;
-
-    for (auto &child: Adj[now]) {
-        if (Visited[child])
-            continue;
-
-        Child[now].push_back(IdxToStr[child]);
-        go(child);
+            if (InDegree[next] == 0) {
+                Answer[cur].push_back(next);
+                q.push(next);
+            }
+        }
     }
 }
 
@@ -49,50 +48,58 @@ int main() {
 
     cin >> N;
 
-    vector<string> people;
     string x, y;
     for (int i = 0; i < N; ++i) {
         cin >> x;
 
-        people.push_back(x);
         StrToIdx.insert(make_pair(x, i));
         IdxToStr.insert(make_pair(i, x));
-        Parent.insert(make_pair(x, x));
     }
 
     cin >> M;
+
     for (int i = 0; i < M; ++i) {
         cin >> x >> y;
 
-        Parent[x] = y;
         Adj[StrToIdx[y]].push_back(StrToIdx[x]);
+        InDegree[StrToIdx[x]]++;
     }
 
-    for (int i = 0; i < people.size(); ++i)
-        sort(Adj[i].begin(), Adj[i].end(), cmp);
+    vector<string> parent;
+    for (int i = 0; i < N; ++i) {
+        if (InDegree[i] == 0)
+            parent.push_back(IdxToStr[i]);
+    }
 
-    set<string> s;
-    for (auto &pp: IdxToStr)
-        s.insert(GetParent(pp.second));
+    sort(parent.begin(), parent.end());
 
-    cout << s.size() << '\n';
-    vector<string> parent(s.begin(), s.end());
-    sort(parent.begin(), parent.end(), cmp_str);
+    cout << parent.size() << '\n';
 
-    for (auto &super: parent) {
-        cout << super << ' ';
-        go(StrToIdx[super]);
+    for (auto &p: parent) {
+        cout << p << ' ';
+        Sort(StrToIdx[p]);
     }
 
     cout << '\n';
 
-    sort(people.begin(), people.end(), cmp_str);
-    for (auto &pp: people) {
-        cout << pp << ' ' << Child[StrToIdx[pp]].size() << ' ';
+    vector<Person> ret;
+    for (int i = 0; i < N; ++i) {
+        Person p;
+        p.name = IdxToStr[i];
 
-        sort(Child[StrToIdx[pp]].begin(), Child[StrToIdx[pp]].begin(), cmp_str);
+        for (auto &child: Answer[i])
+            p.children.push_back(IdxToStr[child]);
 
-        for (auto &child: Child[StrToIdx[pp]])
+        sort(p.children.begin(), p.children.end());
+        ret.push_back(p);
+    }
+
+    sort(ret.begin(), ret.end());
+
+    for (auto &answer: ret) {
+        cout << answer.name << ' ' << answer.children.size() << ' ';
+
+        for (auto &child: answer.children)
             cout << child << ' ';
 
         cout << '\n';
