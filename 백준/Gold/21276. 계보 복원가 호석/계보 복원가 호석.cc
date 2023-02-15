@@ -76,23 +76,27 @@ int main() {
         s.insert(GetParent(pp.second));
 
     cout << s.size() << '\n';
-    for (auto &super: s) {
+    vector<string> parent(s.begin(), s.end());
+    sort(parent.begin(), parent.end(), cmp_str);
+
+    for (auto &super: parent) {
         cout << super << ' ';
         go(StrToIdx[super]);
     }
 
     cout << '\n';
 
-    sort(people.begin(), people.end());
+    sort(people.begin(), people.end(), cmp_str);
     for (auto &pp: people) {
         cout << pp << ' ' << Child[StrToIdx[pp]].size() << ' ';
 
-        sort(Child[StrToIdx[pp]].begin(), Child[StrToIdx[pp]].begin());
+        sort(Child[StrToIdx[pp]].begin(), Child[StrToIdx[pp]].begin(), cmp_str);
 
         for (auto &child: Child[StrToIdx[pp]])
             cout << child << ' ';
 
         cout << '\n';
     }
+
     return 0;
 }
