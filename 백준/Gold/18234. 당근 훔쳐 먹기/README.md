@@ -8,7 +8,7 @@
 
 ### 분류
 
-그리디 알고리즘(greedy), 수학(math), 정렬(sorting)
+그리디 알고리즘(greedy), 정렬(sorting)
 
 ### 문제 설명
 
