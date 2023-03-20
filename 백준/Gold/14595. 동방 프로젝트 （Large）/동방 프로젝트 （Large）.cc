@@ -2,8 +2,6 @@
 #include <vector>
 #include <algorithm>
 
-#define MAX 1000001
-
 using namespace std;
 
 int N, M;
