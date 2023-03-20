@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int N, M, Rooms[MAX];
+int N, M;
 
 bool cmp_pair(const pair<int, int> &a, const pair<int, int> &b) {
     if (a.first == b.first)
