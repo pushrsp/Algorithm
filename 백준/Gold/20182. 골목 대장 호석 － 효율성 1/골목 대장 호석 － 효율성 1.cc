@@ -19,7 +19,6 @@ bool Di(int max_cost) {
 
     while (!pq.empty()) {
         int curr_node = pq.top().second;
-        int curr_cost = -pq.top().first;
         pq.pop();
 
         if (curr_node == B)
@@ -27,16 +26,16 @@ bool Di(int max_cost) {
 
         for (auto &next: Adj[curr_node]) {
             int next_node = next.first;
-            int next_cost = curr_cost + next.second;
+            int next_cost = Dist[curr_node] + next.second;
 
             if (Dist[next_node] > next_cost) {
-                if (next_cost > max_cost)
-                    continue;
                 if (next_cost > C)
+                    continue;
+                if (next.second > max_cost)
                     continue;
 
                 Dist[next_node] = next_cost;
-                pq.emplace(next_cost, next_node);
+                pq.emplace(-next_cost, next_node);
             }
         }
     }
@@ -65,7 +64,7 @@ int main() {
 
         if (Di(mid)) {
             right = mid;
-            ret = mid;
+            ret = min(ret, mid);
         } else {
             left = mid;
         }
