@@ -57,16 +57,16 @@ int main() {
         Adj[n2].emplace_back(n1, dist);
     }
 
-    int left = 0, right = 21, mid, ret = INF;
-    while (left + 1 < right) {
+    int left = 0, right = 22, mid, ret = INF;
+    while (left < right) {
         fill(Dist, Dist + MAX, INF);
         mid = (left + right) / 2;
 
         if (Di(mid)) {
-            right = mid;
+            right = mid - 1;
             ret = min(ret, mid);
         } else {
-            left = mid;
+            left = mid + 1;
         }
     }
 
