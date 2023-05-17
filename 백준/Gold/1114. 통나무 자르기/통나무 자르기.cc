@@ -55,12 +55,11 @@ int main() {
     K = j;
     Pos[K] = L;
 
-    ll left = L / (C + 1), right = L, mid, temp, ret;
+    ll left = 0, right = L * 2, mid, ret;
     while (left <= right) {
         mid = (left + right) / 2;
-        temp = Search(mid);
 
-        if (temp >= 1) {
+        if (Search(mid) >= 1) {
             ret = mid;
             right = mid - 1;
         } else {
