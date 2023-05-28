@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <queue>
 #include <cmath>
-#include <vector>
 
 using namespace std;
 
@@ -13,22 +12,31 @@ void CreateTable(string &pattern) {
 
     int j = 0;
     for (int i = 1; i < pattern.length(); ++i) {
-        while (pattern[j] != pattern[i] && j > 0)
+        while (j > 0 && pattern[j] != pattern[i])
             j = Table[j - 1];
 
-        if (pattern[j] == pattern[i])
+        if (pattern[i] == pattern[j])
             Table[i] = ++j;
     }
 }
 
-void KMP(string s, string pattern) {
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
+    string s;
+    getline(cin, s);
+
+    string pattern;
+    getline(cin, pattern);
+
     CreateTable(pattern);
 
     int j = 0, ret1 = 0;
     vector<int> ret2;
 
     for (int i = 0; i < s.length(); ++i) {
-        while (s[i] != pattern[j] && j > 0)
+        while (j > 0 && s[i] != pattern[j])
             j = Table[j - 1];
 
         if (s[i] == pattern[j]) {
@@ -45,16 +53,6 @@ void KMP(string s, string pattern) {
     cout << ret1 << '\n';
     for (auto &a: ret2)
         cout << a << ' ';
-}
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL), cout.tie(NULL);
-
-    string s, pattern;
-    getline(cin, s);
-    getline(cin, pattern);
-
-    KMP(s, pattern);
     return 0;
 }
