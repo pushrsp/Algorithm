@@ -1,49 +1,42 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <cmath>
 #include <string>
 #include <unordered_set>
 
 using namespace std;
 
 int N, M, Arr[31];
-bool Visited[31][16000];
-
-void go(int n, int sum) {
-    if (n == N + 1)
-        return;
-    if (Visited[n][sum])
-        return;
-
-    Visited[n][sum] = true;
-
-    go(n + 1, sum + Arr[n]);
-    go(n + 1, sum);
-    go(n + 1, ::abs(sum - Arr[n]));
-}
+bool DP[40001];
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL), cout.tie(NULL);
 
     cin >> N;
-    for (int i = 0; i < N; ++i)
+    for (int i = 1; i <= N; ++i)
         cin >> Arr[i];
 
-    cin >> M;
+    DP[0] = true;
+    for (int i = 1; i <= N; ++i) {
+        for (int j = 40000; j >= 0; --j) {
+            if (DP[j])
+                DP[j + Arr[i]] = true;
+        }
 
-    go(0, 0);
+        for (int j = 0; j <= 40000; ++j) {
+            if (DP[j])
+                DP[::abs(j - Arr[i])] = true;
+        }
+    }
+
+    cin >> M;
 
     int num;
     for (int i = 0; i < M; ++i) {
         cin >> num;
 
-        if (num > 15000) {
-            cout << 'N' << ' ';
-            continue;
-        }
-
-        if (Visited[N][num])
+        if (DP[num])
             cout << 'Y' << ' ';
         else
             cout << 'N' << ' ';
