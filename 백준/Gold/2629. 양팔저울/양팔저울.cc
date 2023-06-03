@@ -24,7 +24,7 @@ int main() {
                 DP[j + Arr[i]] = true;
         }
 
-        for (int j = 0; j <= 40000; ++j) {
+        for (int j = 0; j < 40000; ++j) {
             if (DP[j])
                 DP[::abs(j - Arr[i])] = true;
         }
