@@ -1,12 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
-#include <string>
-#include <unordered_set>
+#include <cstring>
 
 using namespace std;
 
-int N, M, Arr[31];
+int N, M, C[31];
 bool DP[40001];
 
 int main() {
@@ -14,32 +12,33 @@ int main() {
     cin.tie(NULL), cout.tie(NULL);
 
     cin >> N;
-    for (int i = 1; i <= N; ++i)
-        cin >> Arr[i];
 
     DP[0] = true;
-    for (int i = 1; i <= N; ++i) {
-        for (int j = 40000; j >= 0; --j) {
-            if (DP[j])
-                DP[j + Arr[i]] = true;
+    for (int n = 1; n <= N; ++n) {
+        cin >> C[n];
+
+        for (int i = 40000; i >= 0; --i) {
+            if (DP[i])
+                DP[i + C[n]] = true;
         }
 
-        for (int j = 0; j < 40000; ++j) {
-            if (DP[j])
-                DP[::abs(j - Arr[i])] = true;
+        for (int i = 0; i <= 40000; ++i) {
+            if (DP[i])
+                DP[::abs(i - C[n])] = true;
         }
     }
 
     cin >> M;
 
-    int num;
-    for (int i = 0; i < M; ++i) {
-        cin >> num;
+    int n;
+    for (int m = 0; m < M; ++m) {
+        cin >> n;
 
-        if (DP[num])
+        if (DP[n])
             cout << 'Y' << ' ';
         else
             cout << 'N' << ' ';
     }
+
     return 0;
 }
