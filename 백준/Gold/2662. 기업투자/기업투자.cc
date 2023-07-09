@@ -1,41 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 #include <cstring>
-#include <unordered_set>
 
 using namespace std;
 
 int N, M, Arr[301][21], DP[301][21], Trace[301][21];
-
-int go(int n, int m) {
-    if (m > M)
-        return 0;
-
-    int &ret = DP[n][m];
-    if (ret != -1)
-        return ret;
-
-    ret = 0;
-    for (int i = 0; i <= n; ++i) {
-        int temp = go(n - i, m + 1) + Arr[i][m];
-
-        if (temp > ret) {
-            ret = temp;
-            Trace[n][m] = i;
-        }
-    }
-
-    return ret;
-}
-
-void print() {
-    int temp = N;
-    for (int i = 1; i <= M; ++i) {
-        cout << Trace[temp][i] << ' ';
-        temp -= Trace[temp][i];
-    }
-}
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -43,16 +12,35 @@ int main() {
 
     cin >> N >> M;
 
-    int invest;
-    for (int i = 0; i < N; ++i) {
-        cin >> invest;
-        for (int j = 1; j <= M; ++j)
-            cin >> Arr[invest][j];
+    int c;
+    for (int n = 1; n <= N; ++n) {
+        cin >> c;
+
+        for (int m = 1; m <= M; ++m)
+            cin >> Arr[n][m];
     }
 
-    ::memset(DP, -1, sizeof(DP));
+    for (int n = 1; n <= N; ++n) { //돈
+        for (int m = 1; m <= M; ++m) { //기업
+            for (int k = 0; k <= n; ++k) {
+                if (Arr[k][m] + DP[n - k][m - 1] > DP[n][m]) {
+                    DP[n][m] = Arr[k][m] + DP[n - k][m - 1];
+                    Trace[n][m] = k;
+                }
+            }
+        }
+    }
 
-    cout << go(N, 1) << '\n';
-    print();
+    cout << DP[N][M] << '\n';
+
+    vector<int> answer;
+    for (int m = M; m >= 1; --m) {
+        answer.push_back(Trace[N][m]);
+        N -= Trace[N][m];
+    }
+
+    for (int i = answer.size() - 1; i >= 0; --i)
+        cout << answer[i] << ' ';
+
     return 0;
 }
