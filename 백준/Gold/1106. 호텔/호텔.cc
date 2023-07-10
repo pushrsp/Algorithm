@@ -1,7 +1,6 @@
 #include <iostream>
+#include <vector>
 #include <cstring>
-#include <algorithm>
-#include <cmath>
 
 #define INF 987654321
 
@@ -16,28 +15,27 @@ int main() {
     cin >> C >> N;
 
     vector<pair<int, int>> vec(N + 1);
-    for (int i = 1; i <= N; ++i)
-        cin >> vec[i].first >> vec[i].second;
+    for (int n = 1; n <= N; ++n)
+        cin >> vec[n].first >> vec[n].second;
 
     for (auto &dp: DP)
         fill(dp, dp + 1001, INF);
 
     for (int n = 1; n <= N; ++n) {
-        int price = vec[n].first, quantity = vec[n].second;
+        int cost = vec[n].first, customer = vec[n].second;
 
         for (int c = 1; c <= C; ++c) {
-            int m = c / quantity, r = c % quantity;
+            int d = c / customer, r = c % customer;
             if (r > 0)
-                m += 1;
+                d += 1;
 
-            DP[n][c] = min(m * price, DP[n - 1][c]);
-            if (quantity <= c) {
-                DP[n][c] = min(DP[n][c], DP[n - 1][c - quantity] + price);
-                DP[n][c] = min(DP[n][c], DP[n][c - quantity] + price);
-            }
+            DP[n][c] = min(DP[n - 1][c], cost * d);
+            if (customer <= c)
+                DP[n][c] = min(DP[n][c], min(DP[n - 1][c - customer] + cost, DP[n][c - customer] + cost));
         }
     }
 
     cout << DP[N][C] << '\n';
+
     return 0;
 }
