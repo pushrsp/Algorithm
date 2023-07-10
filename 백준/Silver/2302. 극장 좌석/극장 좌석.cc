@@ -1,12 +1,10 @@
 #include <iostream>
-#include <queue>
-#include <map>
 #include <vector>
-#include <algorithm>
+#include <cstring>
 
 using namespace std;
 
-int N, M, DP[41], VIP[41];
+int N, M, Arr[41], DP[41];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -14,20 +12,24 @@ int main() {
 
     cin >> N;
     cin >> M;
+
+    vector<int> vip(M);
     for (int m = 0; m < M; ++m)
-        cin >> VIP[m];
+        cin >> vip[m];
 
     DP[0] = 1, DP[1] = 1, DP[2] = 2;
-    for (int n = 3; n <= N; ++n)
-        DP[n] = DP[n - 1] + DP[n - 2];
+    for (int i = 3; i <= N; ++i)
+        DP[i] = DP[i - 1] + DP[i - 2];
 
-    int ret = 1, prev = 0;
-    for (int m = 0; m < M; ++m) {
-        ret *= DP[VIP[m] - prev - 1];
-        prev = VIP[m];
+    int ret = 1, start = 0;
+    for (auto &v: vip) {
+        ret *= DP[v - 1 - start];
+        start = v;
     }
 
-    ret *= DP[N - prev];
+    ret *= DP[N - start];
+
     cout << ret << '\n';
+
     return 0;
 }
