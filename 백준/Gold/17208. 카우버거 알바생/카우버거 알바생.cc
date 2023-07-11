@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <cstring>
 
 using namespace std;
 
@@ -13,18 +13,19 @@ int main() {
     cin >> N >> M >> K;
 
     vector<pair<int, int>> vec(N + 1);
-    for (int i = 1; i <= N; ++i)
-        cin >> vec[i].first >> vec[i].second;
+    for (int n = 1; n <= N; ++n)
+        cin >> vec[n].first >> vec[n].second;
 
     for (int n = 1; n <= N; ++n) {
-        int h = vec[n].first, p = vec[n].second;
+        int cheese = vec[n].first, potato = vec[n].second;
 
         for (int m = 1; m <= M; ++m) {
             for (int k = 1; k <= K; ++k) {
-                if (h <= m && p <= k)
-                    DP[n][m][k] = max(DP[n - 1][m][k], DP[n - 1][m - h][k - p] + 1);
-                else
+                if (cheese <= m && potato <= k) {
+                    DP[n][m][k] = max(DP[n - 1][m][k], DP[n - 1][m - cheese][k - potato] + 1);
+                } else {
                     DP[n][m][k] = DP[n - 1][m][k];
+                }
             }
         }
     }
