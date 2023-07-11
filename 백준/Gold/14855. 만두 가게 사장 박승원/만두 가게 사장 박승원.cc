@@ -1,40 +1,38 @@
 #include <iostream>
 #include <vector>
-#include <stack>
-#include <algorithm>
+#include <cstring>
 
 using namespace std;
 
-int N, M;
-int A[1001], B[1001], C[1001], D[1001], Bound[1001], DP[100001][11];
+int N, M, A[11], B[11], C[11], D[11], DP[1001];
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL), cout.tie(NULL);
 
     cin >> N >> M >> C[0] >> D[0];
-    for (int i = 1; i <= M; ++i)
-        cin >> A[i] >> B[i] >> C[i] >> D[i];
 
-    Bound[0] = N / C[0];
-    for (int i = 1; i <= M; ++i)
-        Bound[i] = min(A[i] / B[i], N / C[i]);
+    for (int i = 0; i <= N; ++i)
+        DP[i] = (i / C[0]) * D[0];
 
-    int idx = 1, ret = 0;
-    for (int i = 0; i <= M; ++i) {
-        for (int j = 1; j <= Bound[i]; ++j) {
-            for (int k = N; k >= 0; --k) {
-                if (C[i] <= k)
-                    DP[idx][k] = max(DP[idx - 1][k], DP[idx - 1][k - C[i]] + D[i]);
-                else
-                    DP[idx][k] = DP[idx - 1][k];
+    for (int m = 1; m <= M; ++m)
+        cin >> A[m] >> B[m] >> C[m] >> D[m];
 
-                ret = max(ret, DP[idx][k]);
-            }
-            idx++;
+    for (int m = 1; m <= M; ++m) {
+        int a = A[m], b = B[m];
+        int ab = a / b;
+
+        for (int i = 0; i < ab; ++i) {
+            for (int j = N; j >= C[m]; --j)
+                DP[j] = max(DP[j], DP[j - C[m]] + D[m]);
         }
     }
 
+    int ret = 0;
+    for (int i = 0; i <= N; ++i)
+        ret = max(ret, DP[i]);
+
     cout << ret << '\n';
+
     return 0;
 }
