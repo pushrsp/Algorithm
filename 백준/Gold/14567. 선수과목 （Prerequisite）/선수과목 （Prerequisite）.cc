@@ -1,11 +1,10 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include <queue>
 
 using namespace std;
 
-int N, M, InDegree[1001], Answer[1001];
+int N, M, InDegree[1001];
 vector<int> Adj[1001];
 
 int main() {
@@ -15,23 +14,26 @@ int main() {
     cin >> N >> M;
 
     int a, b;
-    for (int i = 0; i < M; ++i) {
+    for (int m = 0; m < M; ++m) {
         cin >> a >> b;
+
         Adj[a].push_back(b);
         InDegree[b]++;
     }
 
     queue<pair<int, int>> q;
     for (int i = 1; i <= N; ++i) {
-        if (InDegree[i] == 0)
+        if (InDegree[i] == 0) {
             q.emplace(i, 1);
+            InDegree[i] = 1;
+        }
     }
 
     while (!q.empty()) {
         auto curr = q.front();
         q.pop();
 
-        Answer[curr.first] = curr.second;
+        InDegree[curr.first] = curr.second;
 
         for (auto &next: Adj[curr.first]) {
             if (--InDegree[next] == 0)
@@ -40,7 +42,7 @@ int main() {
     }
 
     for (int i = 1; i <= N; ++i)
-        cout << Answer[i] << ' ';
+        cout << InDegree[i] << ' ';
 
     return 0;
 }
