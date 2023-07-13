@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <vector>
 #include <cstring>
+
+#define INF 987654321
 
 using namespace std;
 
-int H, N, DP[100001];
+int N, H, DP[100001];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -14,19 +14,14 @@ int main() {
 
     cin >> H >> N;
 
-    vector<pair<int, int>> vec(N + 1);
-    for (int i = 1; i <= N; ++i)
-        cin >> vec[i].first >> vec[i].second;
-
-    ::memset(DP, -1, sizeof(DP));
-
-    DP[0] = 987654321;
+    DP[0] = INF;
+    int h, s;
     for (int n = 1; n <= N; ++n) {
-        int height = vec[n].first, speed = vec[n].second;
+        cin >> h >> s;
 
-        for (int h = H; h >= height; --h) {
-            if (DP[h - height] != -1)
-                DP[h] = max(DP[h], min(DP[h - height], speed));
+        for (int i = H; i >= h; --i) {
+            if (DP[i - h] > 0)
+                DP[i] = max(DP[i], min(DP[i - h], s));
         }
     }
 
