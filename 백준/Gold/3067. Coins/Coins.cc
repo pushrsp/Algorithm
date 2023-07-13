@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int T, N, M, Coins[21], DP[10001];
+int T, N, M, DP[10001], Arr[21];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -12,22 +12,21 @@ int main() {
 
     cin >> T;
     while (T--) {
-        ::memset(Coins, 0, sizeof(Coins));
-        ::memset(DP, 0, sizeof(DP));
-
         cin >> N;
-        for (int i = 1; i <= N; ++i)
-            cin >> Coins[i];
+
+        ::memset(DP, 0, sizeof(DP));
+        ::memset(Arr, 0, sizeof(Arr));
+
+        for (int n = 1; n <= N; ++n)
+            cin >> Arr[n];
 
         cin >> M;
 
         DP[0] = 1;
         for (int n = 1; n <= N; ++n) {
-            int coin = Coins[n];
-
             for (int m = 1; m <= M; ++m) {
-                if (m - coin >= 0)
-                    DP[m] += DP[m - coin];
+                if (m - Arr[n] >= 0)
+                    DP[m] += DP[m - Arr[n]];
             }
         }
 
