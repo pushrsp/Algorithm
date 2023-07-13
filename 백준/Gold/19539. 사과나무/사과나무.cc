@@ -1,16 +1,33 @@
-#include <bits/stdc++.h>
-using namespace std;
-int N, now, cnt_2, sum ;
+#include <iostream>
+#include <vector>
 
-int main()
-{
-    cin >> N ;
-    for(int i = 0 ; i < N ; i++)
-    {
-        cin >> now ;
-        sum += now ;
-        cnt_2+= now / 2 ;
+using namespace std;
+
+int N, Arr[100001];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
+    cin >> N;
+
+    int sum = 0, sum2 = 0;
+    for (int n = 1; n <= N; ++n) {
+        cin >> Arr[n];
+        sum2 += Arr[n] / 2;
+        sum += Arr[n];
     }
-    if(sum % 3 != 0) cout << "NO\n" ;
-    else cnt_2 >= sum / 3 ? cout << "YES\n" : cout << "NO\n" ;
+
+    if (sum % 3 != 0) {
+        cout << "NO" << '\n';
+    } else {
+        sum /= 3;
+
+        if (sum2 >= sum)
+            cout << "YES" << '\n';
+        else
+            cout << "NO" << '\n';
+    }
+
+    return 0;
 }
