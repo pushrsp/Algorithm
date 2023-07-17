@@ -1,14 +1,14 @@
-# [Gold III] 계보 복원가 호석 - 21276 
+# [Gold II] 계보 복원가 호석 - 21276 
 
 [문제 링크](https://www.acmicpc.net/problem/21276) 
 
 ### 성능 요약
 
-메모리: 5316 KB, 시간: 160 ms
+메모리: 130564 KB, 시간: 780 ms
 
 ### 분류
 
-자료 구조(data_structures), 그래프 이론(graphs), 해시를 사용한 집합과 맵(hash_set), 정렬(sorting), 위상 정렬(topological_sorting)
+자료 구조, 그래프 이론, 해시를 사용한 집합과 맵, 정렬, 위상 정렬, 트리
 
 ### 문제 설명
 
