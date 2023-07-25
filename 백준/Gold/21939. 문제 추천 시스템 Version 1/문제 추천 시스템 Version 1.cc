@@ -30,7 +30,6 @@ struct Easy {
 };
 
 int N, M, L, P;
-bool Solved[100001];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -103,5 +102,6 @@ int main() {
             h_pq.push({p, l});
         }
     }
+
     return 0;
 }
