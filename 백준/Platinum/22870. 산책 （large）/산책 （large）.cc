@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <cstring>
+#include <algorithm>
 #include <queue>
 
 #define INF 987654321
@@ -69,6 +69,9 @@ int main() {
         Adj[A].emplace_back(B, C);
         Adj[B].emplace_back(A, C);
     }
+
+    for (int n = 0; n <= N; ++n)
+        sort(Adj[n].begin(), Adj[n].end());
 
     cin >> S >> E;
 
