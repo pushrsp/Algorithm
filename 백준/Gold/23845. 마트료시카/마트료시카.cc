@@ -1,51 +1,45 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+#define ll long long
+#define MAX 300002
+
 using namespace std;
-typedef long long ll;
-typedef pair<int, int> pii;
-typedef pair<ll, ll> pll;
-typedef unsigned long long ull;
-typedef pair<double, double> pdd;
-typedef vector<vector<ll>> vll;
-typedef tuple <ll, ll, ll, ll, ll> tl;
-typedef tuple<int, int, int> ti;
-int dx[4] = { -1, 0, 1, 0 };
-int dy[4] = { 0, 1, 0, -1 };
-ll gcd(ll a, ll b) { for (; b; a %= b, swap(a, b)); return a; }
-const int N = 300002;
-int cnt[N];
 
-int main(void)
-{
-	ios::sync_with_stdio(0);
-	cin.tie(0), cout.tie(0);
-	int n; cin >> n;
-	vector<ll> a(n);
-	for (int i = 0; i < n; i++)
-	{
-		cin >> a[i];
-		cnt[a[i]]++;
-	}
+int N, Cnt[MAX];
 
-	sort(a.begin(), a.end());
-	ll ans = 0;
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
 
-	for (int i = 0; i < n; i++)
-	{
-		ll x = a[i];
-		if (cnt[x] == 0) continue;
-		cnt[x]--;
-		ll nx = x + 1, len = 1;
-		while (true)
-		{
-			if (cnt[nx] == 0)
-			{
-				ans += len * (nx - 1);
-				break;
-			}
-			cnt[nx]--; 
-			nx++; len++;
-		}
-	}
+    cin >> N;
 
-	cout << ans;
+    vector<ll> x(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> x[i];
+        Cnt[x[i]]++;
+    }
+
+    sort(x.begin(), x.end());
+
+    ll ret = 0;
+    for (int i = 0; i < N; ++i) {
+        if (Cnt[x[i]] == 0)
+            continue;
+
+        Cnt[x[i]]--;
+        ll next = x[i] + 1, size = 1;
+        while (Cnt[next] != 0) {
+            Cnt[next]--;
+            next++, size++;
+        }
+
+        ret += (next - 1) * (next - 1 - x[i] + 1);
+    }
+
+    cout << ret << '\n';
+
+    return 0;
 }
