@@ -1,48 +1,51 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
-
-#define ll long long
-#define MAX 200001
-
+#include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef unsigned long long ull;
+typedef pair<double, double> pdd;
+typedef vector<vector<ll>> vll;
+typedef tuple <ll, ll, ll, ll, ll> tl;
+typedef tuple<int, int, int> ti;
+int dx[4] = { -1, 0, 1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
+ll gcd(ll a, ll b) { for (; b; a %= b, swap(a, b)); return a; }
+const int N = 300002;
+int cnt[N];
 
-int N;
-priority_queue<ll> pqs[100002];
+int main(void)
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	int n; cin >> n;
+	vector<ll> a(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+		cnt[a[i]]++;
+	}
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL), cout.tie(NULL);
+	sort(a.begin(), a.end());
+	ll ans = 0;
 
-    cin >> N;
+	for (int i = 0; i < n; i++)
+	{
+		ll x = a[i];
+		if (cnt[x] == 0) continue;
+		cnt[x]--;
+		ll nx = x + 1, len = 1;
+		while (true)
+		{
+			if (cnt[nx] == 0)
+			{
+				ans += len * (nx - 1);
+				break;
+			}
+			cnt[nx]--; 
+			nx++; len++;
+		}
+	}
 
-    vector<ll> x(N);
-    for (int i = 0; i < N; ++i)
-        cin >> x[i];
-
-    sort(x.begin(), x.end(), greater<int>());
-
-    for (int n = 0; n < N; ++n) {
-        if (pqs[x[n] + 1].empty()) {
-            pqs[x[n]].push(x[n]);
-        } else {
-            int top = pqs[x[n] + 1].top();
-            pqs[x[n] + 1].pop();
-            pqs[x[n]].push(top);
-        }
-    }
-
-    ll ret = 0;
-    for (int i = 1; i <= 100000; ++i) {
-        while (!pqs[i].empty()) {
-            ll top = pqs[i].top();
-            pqs[i].pop();
-            ret += top * (top - i + 1);
-        }
-    }
-
-    cout << ret << '\n';
-
-    return 0;
+	cout << ans;
 }
