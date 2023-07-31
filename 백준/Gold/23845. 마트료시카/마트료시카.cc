@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #define ll long long
-#define MAX 300002
+#define MAX 100002
 
 using namespace std;
 
