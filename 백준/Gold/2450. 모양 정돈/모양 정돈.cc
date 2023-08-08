@@ -20,15 +20,7 @@ int calc() {
     for (i = 0; i < N; i++)
         pos[B[i]][A[i]]++;
 
-    for (i = 1; i < 3; i++) {
-        for (j = i + 1; j <= 3; j++) {
-            k = min(pos[i][j], pos[j][i]);
-            cnt1 += k;
-            cnt2 += pos[i][j] + pos[j][i] - (k * 2);
-        }
-    }
-
-    return cnt1 + cnt2 / 3 * 2;
+    return pos[1][2] + pos[1][3] + max(pos[2][3], pos[3][2]);
 }
 
 void go(int count) {
