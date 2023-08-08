@@ -8,19 +8,19 @@
 
 ### 분류
 
-많은 조건 분기(case_work), 그리디 알고리즘(greedy)
+많은 조건 분기, 그리디 알고리즘
 
 ### 문제 설명
 
 <p><그림 1>과 같이 정사각형 모양을 한 여섯 종류의 색종이가 있다. 1번 색종이는 한 변의 길이가 1cm이고, 차례대로 그 길이가 1cm씩 커져, 6번 색종이의 한 변의 길이는 6cm가 된다.</p>
 
-<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/e5370e10-310a-482f-ae4c-eb5f6deb8125/-/preview/" style="width: 400px; height: 100px;"></p>
+<p style="text-align: center;"><img alt="" src="" style="width: 400px; height: 100px;"></p>
 
 <p style="text-align: center;"><그림 1></p>
 
 <p>주어진 색종이를 <그림 2>와 같이 가로, 세로의 길이가 각각 6cm인 판 위에 붙이려고 한다. 색종이를 붙일 때는 색종이가 판의 경계 밖으로 삐져 나가서는 안되며, 색종이가 서로 겹쳐서도 안 된다. 또한 하나의 색종이는 하나의 판에만 붙여야 한다.</p>
 
-<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/af383a8a-57d5-47e5-884f-b6f94eb233eb/-/preview/" style="width: 99px; height: 100px;"></p>
+<p style="text-align: center;"><img alt="" src="" style="width: 99px; height: 100px;"></p>
 
 <p style="text-align: center;"><그림 2></p>
 
