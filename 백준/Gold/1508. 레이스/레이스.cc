@@ -1,25 +1,20 @@
 #include <iostream>
 #include <vector>
+#include <cstring>
 #include <algorithm>
-#include <cmath>
-#include <queue>
 
-#define MAX 51
+#define ll unsigned long long
 
 using namespace std;
 
 int N, M, K;
-int Arr[MAX];
+int A[51];
 
-string max_str(const string &a, const string &b) {
-    for (int i = 0; i < b.length(); ++i) {
-        if (a[i] > b[i])
-            return a;
-        else if (a[i] < b[i])
-            return b;
-    }
+bool desc_pair(const pair<ll, ll> &a, const pair<ll, ll> &b) {
+    if (a.first == b.first)
+        return a.second > b.second;
 
-    return a;
+    return a.first > b.first;
 }
 
 int main() {
@@ -29,20 +24,19 @@ int main() {
     cin >> N >> M >> K;
 
     for (int i = 0; i < K; ++i)
-        cin >> Arr[i];
+        cin >> A[i];
 
     string ret;
-    int left = 0, right = N * 2, mid, prev, cap;
+    int left = 0, right = N * 2, mid;
     while (left <= right) {
         mid = (left + right) / 2;
-        prev = 0;
-        cap = 1;
 
         string curr = "1";
+        int prev = A[0], cap = 1;
         for (int i = 1; i < K; ++i) {
-            if (Arr[i] - Arr[prev] >= mid) {
+            if (A[i] - prev >= mid) {
                 cap += 1;
-                prev = i;
+                prev = A[i];
                 curr += '1';
 
                 if (cap == M)
@@ -53,7 +47,7 @@ int main() {
         }
 
         while (curr.length() < K)
-            curr += '0';
+            curr.push_back('0');
 
         if (cap == M) {
             left = mid + 1;
@@ -64,5 +58,6 @@ int main() {
     }
 
     cout << ret << '\n';
+
     return 0;
 }
