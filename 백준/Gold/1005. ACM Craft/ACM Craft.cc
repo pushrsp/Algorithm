@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <queue>
-#include <cstring>
 
-#define MAX 1001
+#define INF 987654321
 
 using namespace std;
 
-int T, N, K, W, Arr[MAX], InDegree[MAX], Result[MAX];
-vector<int> Adj[MAX];
+int T, N, K, W, Duration[1001], InDegree[1001], Visited[1001];
+vector<int> Adj[1001];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -16,19 +16,18 @@ int main() {
 
     cin >> T;
     while (T--) {
-        for (int i = 1; i <= N; ++i) {
-            Adj[i].clear();
-            Arr[i] = 0, InDegree[i] = 0, Result[i] = 0;
-        }
-
         cin >> N >> K;
-        for (int i = 1; i <= N; ++i) {
-            cin >> Arr[i];
-            Result[i] = Arr[i];
+
+        for (int n = 1; n <= N; ++n) {
+            Adj[n].clear();
+            InDegree[n] = 0, Visited[n] = 0;
+
+            cin >> Duration[n];
+            Visited[n] = Duration[n];
         }
 
         int x, y;
-        for (int i = 0; i < K; ++i) {
+        for (int k = 0; k < K; ++k) {
             cin >> x >> y;
             Adj[x].push_back(y);
             InDegree[y]++;
@@ -37,29 +36,28 @@ int main() {
         cin >> W;
 
         if (InDegree[W] == 0) {
-            cout << Result[W] << '\n';
+            cout << Visited[W] << '\n';
             continue;
         }
 
         queue<int> q;
-        for (int i = 1; i <= N; ++i) {
-            if (InDegree[i] == 0)
-                q.emplace(i);
+        for (int n = 1; n <= N; ++n) {
+            if (InDegree[n] == 0)
+                q.push(n);
         }
 
         while (!q.empty()) {
             auto curr = q.front();
             q.pop();
 
-            for (int &next: Adj[curr]) {
-                Result[next] = max(Result[next], Result[curr] + Arr[next]);
+            for (auto &next: Adj[curr]) {
+                Visited[next] = max(Visited[next], Visited[curr] + Duration[next]);
                 if (--InDegree[next] == 0)
-                    q.emplace(next);
+                    q.push(next);
             }
         }
 
-        cout << Result[W] << '\n';
+        cout << Visited[W] << '\n';
     }
-    
     return 0;
 }
