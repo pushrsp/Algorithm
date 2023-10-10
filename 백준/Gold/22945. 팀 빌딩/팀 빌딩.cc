@@ -1,6 +1,7 @@
 #include <iostream>
+#include <set>
 #include <vector>
-#include <algorithm>
+#include <vector>
 
 #define ll long long
 
@@ -21,13 +22,13 @@ int main() {
     ll ret = 0;
     int left = 0, right = N - 1;
     while (left < right) {
-        ll cap = right - left - 1;
-        ret = max(ret, cap * min(vec[left], vec[right]));
+        ll sum = (right - left - 1) * min(vec[left], vec[right]);
 
         if (vec[left] < vec[right])
             left++;
         else
             right--;
+        ret = max(ret, sum);
     }
 
     cout << ret << '\n';
