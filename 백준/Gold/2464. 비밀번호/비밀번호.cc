@@ -6,32 +6,7 @@
 
 using namespace std;
 
-int OneCnt;
-ll A, Mask = 3, One = 1, L, H;
-
-void find_min() {
-    L = A ^ Mask;
-    L = L / One * One;
-    ll n = (One >> 1);
-
-    int cnt = OneCnt;
-    while (n && cnt--) {
-        L += n;
-        n >>= 1;
-    }
-}
-
-void find_max() {
-    H = A ^ Mask;
-    H = H / One * One;
-    ll n = 1;
-
-    int cnt = OneCnt;
-    while (n < One && cnt--) {
-        H += n;
-        n <<= 1;
-    }
-}
+ll A;
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -39,24 +14,30 @@ int main() {
 
     cin >> A;
 
-    while (true) {
-        if (L && H)
-            break;
-        if (One > A)
-            break;
-
-        if ((A & Mask) == (One << 1))
-            find_min();
-        if ((A & Mask) == One)
-            find_max();
-        if (A & One)
-            OneCnt++;
-
-        One <<= 1;
-        Mask <<= 1;
+    ll temp = A;
+    string bit;
+    while (temp > 0) {
+        bit = to_string(temp & 1) + bit;
+        temp >>= 1;
     }
 
-    cout << L << ' ' << H << '\n';
+    string lower = bit;
+    string higher = "0" + bit;
 
+    ll l = 0, h = 0;
+
+    prev_permutation(lower.begin(), lower.end());
+    for (int i = 0; i < lower.length(); ++i)
+        l += (lower[lower.length() - i - 1] - '0') * (1LL << i);
+
+    if (l == A)
+        l = 0;
+
+    next_permutation(higher.begin(), higher.end());
+    for (int i = 0; i < higher.length(); ++i)
+        h += (higher[higher.length() - i - 1] - '0') * (1LL << i);
+
+    cout << l << ' ' << h << '\n';
+    
     return 0;
 }
