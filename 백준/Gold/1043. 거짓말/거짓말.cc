@@ -1,13 +1,13 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <set>
+#include <vector>
+#include <vector>
 
 #define ll long long
 
 using namespace std;
 
-int N, M, K, T, A, B, Parent[51], Party[51][51], Size[51];
+int N, M, Parent[51], Party[51][51], Nums[51];
 
 int get_parent(int i) {
     if (Parent[i] == i)
@@ -19,12 +19,10 @@ int get_parent(int i) {
 void merge(int a, int b) {
     a = get_parent(a), b = get_parent(b);
 
-    if (a != b) {
-        if (a < b)
-            Parent[b] = a;
-        else
-            Parent[a] = b;
-    }
+    if (a < b)
+        Parent[b] = a;
+    else
+        Parent[a] = b;
 }
 
 int main() {
@@ -33,32 +31,32 @@ int main() {
 
     cin >> N >> M;
 
-    for (int i = 0; i <= N; ++i)
-        Parent[i] = i;
+    for (int n = 0; n <= N; ++n)
+        Parent[n] = n;
 
-    cin >> K;
-    for (int k = 0; k < K; ++k) {
-        cin >> T;
-        Parent[T] = 0;
+    int t;
+    cin >> t;
+
+    for (int i = 0; i < t; ++i) {
+        int n;
+        cin >> n;
+
+        Parent[n] = 0;
     }
 
     for (int m = 0; m < M; ++m) {
-        cin >> A;
-        cin >> B;
+        cin >> Nums[m];
+        cin >> Party[m][0];
 
-        Size[m] = A;
-        Party[m][0] = B;
-
-        for (int a = 1; a < A; ++a) {
-            cin >> B;
-            Party[m][a] = B;
-            merge(Party[m][0], Party[m][a]);
+        for (int i = 1; i < Nums[m]; ++i) {
+            cin >> Party[m][i];
+            merge(Party[m][0], Party[m][i]);
         }
     }
 
     int ret = M;
     for (int m = 0; m < M; ++m) {
-        for (int i = 0; i < Size[m]; ++i) {
+        for (int i = 0; i < Nums[m]; ++i) {
             if (get_parent(Party[m][i]) == 0) {
                 ret--;
                 break;
@@ -67,6 +65,5 @@ int main() {
     }
 
     cout << ret << '\n';
-
     return 0;
 }
