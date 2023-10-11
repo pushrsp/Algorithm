@@ -8,8 +8,7 @@
 using namespace std;
 
 const int MOD = 1000000000;
-int N, K;
-ll DP[201][201];
+int N, K, DP[201][201];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -17,19 +16,15 @@ int main() {
 
     cin >> N >> K;
 
-    for (int n = 0; n <= N; ++n)
-        DP[1][n] = 1;
+    for (int k = 0; k <= K; ++k)
+        DP[1][k] = k;
 
-    for (int k = 2; k <= K; ++k) {
-        for (int n = 0; n <= N; ++n) {
-            for (int i = 0; i <= n; ++i)
-                DP[k][n] += DP[k - 1][i];
-
-            DP[k][n] %= MOD;
-        }
+    for (int n = 2; n <= N; ++n) {
+        for (int k = 1; k <= K; ++k)
+            DP[n][k] = (DP[n - 1][k] + DP[n][k - 1]) % MOD;
     }
 
-    cout << DP[K][N] << '\n';
+    cout << DP[N][K] << '\n';
 
     return 0;
 }
