@@ -8,30 +8,8 @@
 using namespace std;
 
 const int MOD = 1000000000;
-int N, K, DP[201][201];
-
-int go(int n, int k) {
-    if (n < 0)
-        return 0;
-    if (k == K) {
-        if (n == 0)
-            return 1;
-
-        return 0;
-    }
-
-    int &ret = DP[n][k];
-    if (ret != -1)
-        return ret;
-
-    ret = 0;
-    for (int i = 0; i <= N; ++i) {
-        ret += go(n - i, k + 1);
-        ret %= MOD;
-    }
-
-    return ret;
-}
+int N, K;
+ll DP[201][201];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -39,9 +17,19 @@ int main() {
 
     cin >> N >> K;
 
-    ::memset(DP, -1, sizeof(DP));
+    for (int n = 0; n <= N; ++n)
+        DP[1][n] = 1;
 
-    cout << go(N, 0) << '\n';
+    for (int k = 2; k <= K; ++k) {
+        for (int n = 0; n <= N; ++n) {
+            for (int i = 0; i <= n; ++i)
+                DP[k][n] += DP[k - 1][i];
+
+            DP[k][n] %= MOD;
+        }
+    }
+
+    cout << DP[K][N] << '\n';
 
     return 0;
 }
