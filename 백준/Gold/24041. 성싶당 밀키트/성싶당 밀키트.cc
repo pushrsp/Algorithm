@@ -25,7 +25,7 @@ int main() {
     for (int n = 0; n < N; ++n)
         cin >> vec[n].s >> vec[n].l >> vec[n].o;
 
-    ll left = 0, right = 2e9 * 2, mid, cap, ret = 0;
+    ll left = 0, right = 1e9 * 2, mid, cap, ret = 0;
     while (left <= right) {
         mid = (left + right) / 2;
         cap = 0;
