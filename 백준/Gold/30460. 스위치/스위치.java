@@ -8,24 +8,24 @@ public class Main {
     private static int N;
     private static int[] A = new int[200005];
     private static int[] sum = new int[200005];
-    private static int[] dp = new int[200005];
+    private static int[][] dp = new int[200005][2];
 
-    private static int go(int n) {
+    private static int go(int n, int pressed) {
         if(n > N) {
             return 0;
         }
 
-        if(dp[n] != INF) {
-            return dp[n];
+        if(dp[n][pressed] != INF) {
+            return dp[n][pressed];
         }
 
         //스위치를 누를 경우
-        dp[n] = Math.max(dp[n], go(n + 3) + ((sum[Math.min(N, n + 2)] - sum[n - 1]) * 2));
+        dp[n][pressed] = Math.max(dp[n][pressed], go(n + 3, 1) + ((sum[Math.min(N, n + 2)] - sum[n - 1]) * 2));
 
         //스위치를 누르지 않을 경우
-        dp[n] = Math.max(dp[n], go(n + 1) + A[n]);
+        dp[n][pressed] = Math.max(dp[n][pressed], go(n + 1, 0) + A[n]);
 
-        return dp[n];
+        return dp[n][pressed];
     }
 
     public static void main(String[] args) throws IOException, NoSuchMethodException {
@@ -34,7 +34,7 @@ public class Main {
 
         input(br);
 
-        bw.write(String.valueOf(go(1)) + '\n');
+        bw.write(String.valueOf(go(1, 0)) + '\n');
 
         br.close();
         bw.close();
@@ -45,12 +45,14 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
 
-        dp[0] = INF;
+        dp[0][0] = INF;
+        dp[0][1] = INF;
 
         st = new StringTokenizer(br.readLine());
         for (int n = 1; n <= N; n++) {
             A[n] = Integer.parseInt(st.nextToken());
-            dp[n] = INF;
+            dp[n][0] = INF;
+            dp[n][1] = INF;
             sum[n] = sum[n - 1] + A[n];
         }
 
