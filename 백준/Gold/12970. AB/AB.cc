@@ -23,7 +23,7 @@ int main() {
         return 0;
     }
 
-    int a = 1, b = N - 1, prev = 0;
+    int a = 0, b = N, prev = 0;
     while (true) {
         int sum = a * b;
         if (sum < prev) {
@@ -32,27 +32,21 @@ int main() {
         }
 
         if (sum >= K) {
-            vector<int> cnt(b + 1);
-            for (int i = 0; i < a; ++i) {
-                int mn = min(b, K);
-                cnt[b - mn]++;
-                K -= mn;
-            }
+            for (int i = 0; i < a - 1; ++i)
+                s[i] = 'A';
 
-            for (int i = 0; i <= b; ++i) {
-                for (int j = 0; j < cnt[i]; ++j)
-                    cout << 'A';
-                if (i < b)
-                    cout << 'B';
-            }
-
-            cout << '\n';
-            return 0;
+            int c = (a - 1) * b;
+            int r = K - c;
+            s[(N - 1) - r] = 'A';
+            
+            break;
         }
 
         prev = sum;
         a++, b--;
     }
+
+    cout << s << '\n';
 
     return 0;
 }
