@@ -1,60 +1,25 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <queue>
+#include <map>
+#include <deque>
 
 #define INF 987654321
 
 using namespace std;
 
-struct Point {
-    int w, y, x;
-
-    bool operator<(const Point &other) const {
-        return w > other.w;
-    }
-};
-
-int N, M, Dist[502][502];
-vector<Point> Map[502][502];
+int N, M, Dist[502][502][2];
+vector<string> Circuit;
+map<char, int> Conv;
+int SY[4] = {1, -1, 0, 0}, SX[4] = {0, 0, 1, -1};
+int DY[4] = {1, -1, 1, -1}, DX[4] = {1, -1, -1, 1};
 
 /*
- * 0: /
- * 1: \
+ * \: 0
+ * /: 1
  */
 
 bool in_range(int y, int x) {
-    return 1 <= y && y <= N && 1 <= x && x <= M;
-}
-
-void Di() {
-    for (int y = 0; y <= N; ++y) {
-        for (int x = 0; x <= M; ++x)
-            Dist[y][x] = INF;
-    }
-
-    priority_queue<Point> pq;
-
-    Dist[0][0] = 0;
-    pq.push({0, 0, 0});
-
-    while (!pq.empty()) {
-        int y = pq.top().y;
-        int x = pq.top().x;
-        int w = pq.top().w;
-        pq.pop();
-
-        for (auto &next: Map[y][x]) {
-            int ny = next.y;
-            int nx = next.x;
-            int nw = w + next.w;
-
-            if (Dist[ny][nx] > nw) {
-                Dist[ny][nx] = nw;
-                pq.push({nw, ny, nx});
-            }
-        }
-    }
+    return 0 <= y && y < N && 0 <= x && x < M;
 }
 
 int main() {
@@ -63,31 +28,93 @@ int main() {
 
     cin >> N >> M;
 
-    string s;
-    for (int y = 0; y < N; ++y) {
-        cin >> s;
+    Circuit = vector<string>(N);
+    for (int y = 0; y < N; ++y)
+        cin >> Circuit[y];
 
-        for (int x = 0; x < M; ++x) {
-            if (s[x] == '/') {
-                Map[y][x + 1].push_back({0, y + 1, x});
-                Map[y + 1][x].push_back({0, y, x + 1});
-                Map[y][x].push_back({1, y + 1, x + 1});
-                Map[y + 1][x + 1].push_back({1, y, x});
-            } else {
-                Map[y][x].push_back({0, y + 1, x + 1});
-                Map[y + 1][x + 1].push_back({0, y, x});
-                Map[y][x + 1].push_back({1, y + 1, x});
-                Map[y + 1][x].push_back({1, y, x + 1});
+    Conv.insert(make_pair('\\', 0));
+    Conv.insert(make_pair('/', 1));
+
+    fill(&Dist[0][0][0], &Dist[0][0][0] + 502 * 502 * 2, INF);
+
+    deque<vector<int>> dq;
+    dq.push_back({0, 0, 0});
+
+    if (Circuit[0][0] == '/')
+        Dist[0][0][0] = 1;
+    else
+        Dist[0][0][0] = 0;
+
+    while (!dq.empty()) {
+        auto curr = dq.front();
+        dq.pop_front();
+
+        int cy = curr[0], cx = curr[1], cdir = curr[2];
+        for (int i = 0; i < 4; ++i) { //상하좌우
+            int ny = cy + SY[i], nx = cx + SX[i];
+            if (!in_range(ny, nx))
+                continue;
+
+            int next_dist = Dist[cy][cx][cdir], next_dir = Conv[Circuit[ny][nx]];
+            if (cdir == Conv[Circuit[ny][nx]]) {
+                next_dist++;
+                next_dir = (cdir + 1) % 2;
+            }
+
+            if (next_dist >= Dist[ny][nx][next_dir])
+                continue;
+
+            Dist[ny][nx][next_dir] = next_dist;
+            if (next_dist == Dist[cy][cx][cdir])
+                dq.push_front({ny, nx, next_dir});
+            else
+                dq.push_back({ny, nx, next_dir});
+        }
+
+        //대각선
+        if (cdir == 0) {
+            for (int i = 0; i < 2; ++i) {
+                int ny = cy + DY[i], nx = cx + DX[i];
+                if (!in_range(ny, nx))
+                    continue;
+
+                int next_dist = Dist[cy][cx][cdir], next_dir = Conv[Circuit[ny][nx]];
+                if (cdir != next_dir)
+                    next_dist++;
+                if (next_dist >= Dist[ny][nx][cdir])
+                    continue;
+
+                Dist[ny][nx][cdir] = next_dist;
+                if (next_dist == Dist[cy][cx][cdir])
+                    dq.push_front({ny, nx, cdir});
+                else
+                    dq.push_back({ny, nx, cdir});
+            }
+        } else {
+            for (int i = 2; i < 4; ++i) {
+                int ny = cy + DY[i], nx = cx + DX[i];
+                if (!in_range(ny, nx))
+                    continue;
+                int next_dist = Dist[cy][cx][cdir], next_dir = Conv[Circuit[ny][nx]];
+                if (cdir != next_dir)
+                    next_dist++;
+                if (next_dist >= Dist[ny][nx][cdir])
+                    continue;
+
+                Dist[ny][nx][cdir] = next_dist;
+                if (next_dist == Dist[cy][cx][cdir])
+                    dq.push_front({ny, nx, cdir});
+                else
+                    dq.push_back({ny, nx, cdir});
             }
         }
     }
 
-    Di();
-
-    if (Dist[N][M] == INF)
-        cout << "NO SOLUTION" << '\n';
+    int ret = Dist[N - 1][M - 1][0];
+    if (ret != INF)
+        cout << ret << '\n';
     else
-        cout << Dist[N][M] << '\n';
+        cout << "NO SOLUTION" << '\n';
 
     return 0;
 }
