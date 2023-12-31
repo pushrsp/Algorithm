@@ -1,14 +1,12 @@
 #include <iostream>
-#include <vector>
-#include <queue>
-#include <set>
+#include <deque>
+#include <algorithm>
 
-#define MAX 100000
-#define ll long long
+#define INF 987654321
 
 using namespace std;
 
-int N, K;
+int N, K, Dist[100001];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -16,39 +14,37 @@ int main() {
 
     cin >> N >> K;
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    set<int> visited;
+    deque<int> dq;
+    dq.push_back(N);
 
-    pq.emplace(0, N);
-    visited.insert(N);
+    ::fill(Dist, Dist + 100001, INF);
+    Dist[N] = 0;
 
-    int answer = INT32_MAX;
-    while (!pq.empty()) {
-        auto now = pq.top();
-        pq.pop();
+    while (!dq.empty()) {
+        int curr = dq.front();
+        dq.pop_front();
 
-        if (now.second == K) {
-            cout << now.first << '\n';
+        if (curr == K) {
+            cout << Dist[K] << '\n';
             return 0;
         }
 
-        if (now.second * 2 <= MAX && visited.find(now.second * 2) == visited.end()) {
-            visited.insert(now.second * 2);
-            pq.emplace(now.first, now.second * 2);
+        int tp = curr * 2;
+        if (tp <= 100000 && Dist[tp] > Dist[curr]) {
+            Dist[tp] = Dist[curr];
+            dq.push_front(tp);
         }
 
-        if (now.second + 1 <= MAX && visited.find(now.second + 1) == visited.end()) {
-            visited.insert(now.second + 1);
-            pq.emplace(now.first + 1, now.second + 1);
+        int l = curr - 1, r = curr + 1;
+        if (l >= 0 && Dist[l] > Dist[curr] + 1) {
+            Dist[l] = Dist[curr] + 1;
+            dq.push_back(l);
         }
 
-        if (now.second - 1 >= 0 && visited.find(now.second - 1) == visited.end()) {
-            visited.insert(now.second - 1);
-            pq.emplace(now.first + 1, now.second - 1);
+        if (r <= 100000 && Dist[r] > Dist[curr] + 1) {
+            Dist[r] = Dist[curr] + 1;
+            dq.push_back(r);
         }
     }
-
-    cout << answer << '\n';
-
     return 0;
 }
