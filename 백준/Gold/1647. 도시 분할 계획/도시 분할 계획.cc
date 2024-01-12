@@ -1,19 +1,16 @@
 #include <iostream>
-#include <queue>
+#include <vector>
 #include <algorithm>
 
-#define INF 987654321
-
 using namespace std;
+
+int N, M, Parent[100001];
 
 struct Point {
     int a, b, c;
 };
 
-int N, M, Parent[100001];
-vector<Point> Points;
-
-bool asc(Point &a, Point &b) {
+bool asc(const Point &a, const Point &b) {
     return a.c < b.c;
 }
 
@@ -27,9 +24,6 @@ int get_parent(int n) {
 void merge(int a, int b) {
     a = get_parent(a), b = get_parent(b);
 
-    if (a == b)
-        return;
-
     if (a < b)
         Parent[b] = a;
     else
@@ -42,28 +36,29 @@ int main() {
 
     cin >> N >> M;
 
-    for (int n = 0; n <= N; ++n)
+    for (int n = 1; n <= N; ++n)
         Parent[n] = n;
 
-    int a, b, c;
-    for (int m = 0; m < M; ++m) {
-        cin >> a >> b >> c;
-        Points.push_back({a, b, c});
-    }
+    vector<Point> points(M);
+    for (int m = 0; m < M; ++m)
+        cin >> points[m].a >> points[m].b >> points[m].c;
 
-    sort(Points.begin(), Points.end(), asc);
 
-    vector<int> answer;
-    for (auto &point: Points) {
-        if (get_parent(point.a) != get_parent(point.b)) {
-            answer.push_back(point.c);
-            merge(point.a, point.b);
+    sort(points.begin(), points.end(), asc);
+
+    vector<int> temp;
+    for (auto &p: points) {
+        int a = p.a, b = p.b, c = p.c;
+
+        if (get_parent(a) != get_parent(b)) {
+            merge(a, b);
+            temp.push_back(c);
         }
     }
 
     int ret = 0;
-    for (int i = 0; i < answer.size() - 1; ++i)
-        ret += answer[i];
+    for (int i = 0; i < temp.size() - 1; ++i)
+        ret += temp[i];
 
     cout << ret << '\n';
 
