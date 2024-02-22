@@ -1,47 +1,48 @@
-#include <bits/stdc++.h>
-#define INF 9876543210
-#define endl '\n'
-using namespace std;
-using ll = long long;
+#include <cstring>
+#include <vector>
+#include <deque>
+#include <iostream>
+#include <cmath>
+#include <map>
 
-ll n, t, k, s, e, tmp, ans1, ans2;
-ll table[100001];
-ll sum[100001];
+#define ll long long
+
+using namespace std;
+
+int N, T, S, E, K;
+ll Sum[100001], A[100001];
 
 int main() {
-	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
 
-	cin >> n >> t;
-	for (ll i = 0; i < n; i++) {
-		cin >> k;
-		for (ll j = 0; j < k; j++) {
-			cin >> s >> e;
-			table[s]++;
-			table[e]--;
-		}
-	}
-    
-	//스위핑
-	for (ll i = 1; i <= 100000; i++) table[i] += table[i - 1];
+    cin >> N >> T;
 
-	//누적합 구하는 작업
-	//sum[i]는 1부터 i까지의 합이다!
-	sum[0] = table[0];
-	for (ll i = 1; i <= 100000; i++) sum[i] += sum[i - 1] + table[i];
-	
-   	//최대인 구간 찾는 과정!
-	tmp = sum[t - 1];
-	ans1 = 0;
-	ans2 = t;
-	for (ll i = 1; i <= 100000 - t; i++) {
-		if (sum[i + t - 1] - sum[i - 1] > tmp) {
-			ans1 = i;
-			ans2 = i + t;
-		}
-		tmp = max(sum[i + t - 1] - sum[i - 1], tmp);
-	}
-    
-	cout << ans1 << ' ' << ans2 << endl;
+    for (int n = 0; n < N; ++n) {
+        cin >> K;
 
-	return 0;
+        for (int k = 0; k < K; ++k) {
+            cin >> S >> E;
+            A[S]++, A[E]--;
+        }
+    }
+
+    for (int i = 1; i <= 100000; ++i)
+        A[i] += A[i - 1];
+
+    Sum[0] = A[0];
+    for (int i = 1; i <= 100000; ++i)
+        Sum[i] += Sum[i - 1] + A[i];
+
+    ll ans = Sum[T - 1], s = 0, e = T;
+    for (int i = 1; i <= 100000 - T; ++i) {
+        if (Sum[i + T - 1] - Sum[i - 1] > ans)
+            s = i, e = i + T;
+
+        ans = max(ans, Sum[i + T - 1] - Sum[i - 1]);
+    }
+
+    cout << s << ' ' << e << '\n';
+
+    return 0;
 }
