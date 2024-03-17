@@ -10,14 +10,7 @@
 
 using namespace std;
 
-int N, A[366];
-
-bool cmp_pair(const pair<int, int> &a, const pair<int, int> &b) {
-    if (a.first == b.first)
-        return a.second > b.second;
-
-    return a.first < b.first;
-}
+int N, A[367];
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -25,15 +18,16 @@ int main() {
 
     cin >> N;
 
-    vector<pair<int, int>> v(N);
-    for (int n = 0; n < N; ++n)
-        cin >> v[n].first >> v[n].second;
+    int s, e;
+//    vector<pair<int, int>> v(N);
+    for (int n = 0; n < N; ++n) {
+        cin >> s >> e;
+        A[s]++, A[e + 1]--;
+    }
 
-//    sort(v.begin(), v.end(), cmp_pair);
-
-    for (auto &p: v)
-        A[p.first] += 1, A[p.second + 1] -= 1;
-    for (int i = 1; i <= 365; ++i)
+//    for (auto &p: v)
+//        A[p.first] += 1, A[p.second + 1] -= 1;
+    for (int i = 1; i <= 366; ++i)
         A[i] += A[i - 1];
 
     int ret = 0;
