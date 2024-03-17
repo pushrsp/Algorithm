@@ -19,14 +19,11 @@ int main() {
     cin >> N;
 
     int s, e;
-//    vector<pair<int, int>> v(N);
     for (int n = 0; n < N; ++n) {
         cin >> s >> e;
         A[s]++, A[e + 1]--;
     }
 
-//    for (auto &p: v)
-//        A[p.first] += 1, A[p.second + 1] -= 1;
     for (int i = 1; i <= 366; ++i)
         A[i] += A[i - 1];
 
