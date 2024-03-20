@@ -1,15 +1,29 @@
-#include <iostream>
-#include <algorithm>
+#include <cstring>
 #include <vector>
+#include <queue>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
 
 #define ll long long
+#define INF 1e9
 
 using namespace std;
 
 int N, M, T, K;
 
-bool in_range(int a, int val, int b) {
-    return a <= val and val <= b;
+bool in_range(int p, int t) {
+    return p <= t && t <= p + K;
+}
+
+int go(int x, int y, vector<pair<int, int>> &v) {
+    int ret = 0;
+    for (auto &p: v) {
+        if (in_range(x, p.first) && in_range(y, p.second))
+            ret++;
+    }
+
+    return ret;
 }
 
 int main() {
@@ -18,45 +32,31 @@ int main() {
 
     cin >> N >> M >> T >> K;
 
-    vector<pair<int, int>> points(T);
-    vector<int> xy[2];
-    for (int t = 0; t < T; ++t) {
-        cin >> points[t].first >> points[t].second;
+    vector<pair<int, int>> v(T);
+    for (int t = 0; t < T; ++t)
+        cin >> v[t].first >> v[t].second;
 
-        xy[0].push_back(points[t].first);
-        xy[1].push_back(points[t].second);
-    }
+    int cnt = 0, x, y;
+    for (int i = 0; i < T; ++i) {
+        for (int j = 0; j < T; ++j) {
+            int xx = v[i].first;
+            if (v[i].first + K > N)
+                xx = N - K;
 
-    xy[0].push_back(N - K);
-    xy[1].push_back(M - K);
+            int yy = v[j].second;
+            if (v[j].second + K > M)
+                yy = M - K;
 
-    for (int i = 0; i < 2; ++i) {
-        sort(xy[i].begin(), xy[i].end());
-        xy[i].erase(unique(xy[i].begin(), xy[i].end()), xy[i].end());
-    }
-
-    int retX = 0, retY = 0, retCnt = 0;
-    for (int cur_x: xy[0]) {
-        for (int cur_y: xy[1]) {
-            if (cur_x + K > N || cur_y + K > M)
-                continue;
-
-            int cnt = 0;
-            for (int t = 0; t < T; ++t) {
-                if (in_range(cur_x, points[t].first, cur_x + K) && in_range(cur_y, points[t].second, cur_y + K))
-                    cnt += 1;
-            }
-
-            if (cnt > retCnt) {
-                retCnt = cnt;
-                retX = cur_x;
-                retY = cur_y;
+            int g = go(xx, yy, v);
+            if (g > cnt) {
+                cnt = g;
+                x = xx, y = yy + K;
             }
         }
     }
 
-    cout << retX << ' ' << retY + K << '\n';
-    cout << retCnt << '\n';
+    cout << x << ' ' << y << '\n';
+    cout << cnt << '\n';
 
     return 0;
 }
