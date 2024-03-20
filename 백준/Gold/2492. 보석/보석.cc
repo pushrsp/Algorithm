@@ -38,11 +38,11 @@ int main() {
 
     int cnt = 0, x, y;
     for (int i = 0; i < T; ++i) {
-        for (int j = 0; j < T; ++j) {
-            int xx = v[i].first;
-            if (v[i].first + K > N)
-                xx = N - K;
+        int xx = v[i].first;
+        if (v[i].first + K > N)
+            xx = N - K;
 
+        for (int j = 0; j < T; ++j) {
             int yy = v[j].second;
             if (v[j].second + K > M)
                 yy = M - K;
