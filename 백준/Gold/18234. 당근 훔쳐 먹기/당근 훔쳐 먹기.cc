@@ -1,17 +1,18 @@
-#include <string>
+#include <cstring>
 #include <vector>
+#include <map>
+#include <iostream>
 #include <queue>
 #include <algorithm>
-#include <iostream>
 
 #define ll long long
+#define INF 1e9
 
 using namespace std;
 
-ll N, T;
+int N, T;
 
-bool cmp_pair(const pair<ll, ll>& a, const pair<ll, ll>& b)
-{
+bool cmp(const pair<ll, ll> &a, const pair<ll, ll> &b) {
     if (a.second == b.second)
         return a.first < b.first;
 
@@ -19,22 +20,24 @@ bool cmp_pair(const pair<ll, ll>& a, const pair<ll, ll>& b)
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL), cout.tie(NULL);
+
     cin >> N >> T;
 
-    vector<pair<ll, ll>> carrots(N);
-    for (int n = 0; n < N; n++)
-        cin >> carrots[n].first >> carrots[n].second;
-    
-    sort(carrots.begin(), carrots.end(), cmp_pair);
+    vector<pair<ll, ll>> v(N);
+    for (int n = 0; n < N; ++n)
+        cin >> v[n].first >> v[n].second;
 
-    ll answer = 0;
-    int idx = 0;
-    for (int i = T - N; i < T; i++)
-    {
-        answer += carrots[idx].first + (carrots[idx].second * i);
-        idx++;
+    sort(v.begin(), v.end(), cmp);
+
+    ll ret = 0, day = T - N;
+    for (auto &p: v) {
+        ret += p.first + (p.second * day);
+        day++;
     }
 
-    cout << answer << endl;
+    cout << ret << '\n';
+
     return 0;
 }
