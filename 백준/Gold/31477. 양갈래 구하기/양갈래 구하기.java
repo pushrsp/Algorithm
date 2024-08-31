@@ -20,7 +20,7 @@ public class Main {
             ret += Math.min(next[1], go(next[0]));
         }
 
-        return ret == 0 ? Integer.MAX_VALUE : ret;
+        return ret == 0 ? 999999999 : ret;
     }
 
     public static void main(String[] args) throws IOException {
