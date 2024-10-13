@@ -1,13 +1,13 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
 
     private static int N, M;
     private static List<List<Integer>> G = new ArrayList<>();
-    private static boolean[] E;
     private static int[] P;
 
     private static int getParent(int node) {
@@ -17,16 +17,15 @@ public class Main {
         return P[node] = getParent(P[node]);
     }
 
-    private static boolean isSame(int n1, int n2) {
-        n1 = getParent(n1);
-        n2 = getParent(n2);
-        return n1 == n2;
-    }
-
     private static void union(int n1, int n2) {
         n1 = getParent(n1);
         n2 = getParent(n2);
-        P[n2] = n1;
+
+        if (n1 < n2) {
+            P[n1] = n2;
+        } else {
+            P[n2] = n1;
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -36,7 +35,6 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        E = new boolean[N + 1];
         P = new int[N + 1];
 
         for (int n = 0; n <= N; n++) {
@@ -54,34 +52,43 @@ public class Main {
             G.get(b).add(a);
         }
 
-        List<Integer> erase = new ArrayList<>();
+        // 완성된 그래프에서 노드를 삭제하는 방식은 시간 복잡도가 너무 커서
+        // 오프라인 쿼리를 통해 빈 공간에 노드를 추가해 그래프를 만드는 방식을 채택
+        final Stack<Integer> stack = new Stack<>();
         for (int n = 0; n < N; n++) {
             st = new StringTokenizer(br.readLine());
-            erase.add(Integer.parseInt(st.nextToken()));
+            stack.add(Integer.parseInt(st.nextToken()));
         }
 
-        List<Boolean> ans = new ArrayList<>();
-        ans.add(false);
+        final Stack<Boolean> ret = new Stack<>();
+        ret.add(false); // 마지막은 무조건 false
 
-        int cnt = 0;
-        for (int i = N - 1; i >= 0; i--) {
-            int node = erase.get(i);
-            E[node] = true;
-            cnt++;
-            for (int next : G.get(node)) {
-                if (!E[next]) {
+        final boolean[] visited = new boolean[N + 1];
+        int group = 0;
+        while (!stack.isEmpty()) {
+            final int node = stack.pop();
+            visited[node] = true;
+            group++;
+
+            // 추가하려는 노드가 연결된 노드 즉 자식 노드일 경우
+            // 한 그룹에 속하므로 group--
+            for (int child : G.get(node)) {
+                if (!visited[child]) {
                     continue;
                 }
-                if (!isSame(node, next)) {
-                    union(node, next);
-                    cnt--;
+
+                if (getParent(node) != getParent(child)) {
+                    union(node, child);
+                    group--;
                 }
             }
-            ans.add(cnt == 1);
+
+            ret.add(group == 1);
         }
 
-        for (int i = ans.size() - 1; i >= 0; i--) {
-            if (ans.get(i)) {
+        while (!ret.isEmpty()) {
+            final boolean ans = ret.pop();
+            if (ans) {
                 bw.write("CONNECT\n");
             } else {
                 bw.write("DISCONNECT\n");
