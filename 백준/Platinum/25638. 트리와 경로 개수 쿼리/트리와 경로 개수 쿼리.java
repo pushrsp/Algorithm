@@ -5,40 +5,30 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int N, Q, B, R;
+    private static int N, R, B, Q;
     private static int[] C;
-    private static long[] A;
-    private static final List<List<Integer>> G = new ArrayList<>();
+    private static List<List<Integer>> G = new ArrayList<>();
+    private static List<List<Integer>> T = new ArrayList<>();
+    private static long[][] DP = new long[100001][2];
 
-    private static Pair go(int curr, int parent) {
-        long r = 0;
-        long b = 0;
-        for (Integer node : G.get(curr)) {
-            if (node == parent) {
+    private static void go(int curr, int prev) {
+        for (int next : G.get(curr)) {
+            if (next == prev) {
                 continue;
             }
-            Pair p = go(node, curr);
-            A[curr] += r * p.s + b * p.f;
-            r += p.f;
-            b += p.s;
+
+            T.get(curr).add(next);
+            go(next, curr);
+
+            DP[curr][0] += DP[next][0];
+            DP[curr][1] += DP[next][1];
         }
 
         if (C[curr] == 1) {
-            A[curr] += r * (B - b) + b * (R - r - 1);
+            DP[curr][0] += 1;
         } else {
-            A[curr] += r * (B - b - 1) + b * (R - r);
+            DP[curr][1] += 1;
         }
-
-        if (C[curr] == 1) {
-            r++;
-        } else {
-            b++;
-        }
-
-        final Pair ret = new Pair();
-        ret.f = r;
-        ret.s = b;
-        return ret;
     }
 
     public static void main(String[] args) throws IOException {
@@ -48,25 +38,26 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         C = new int[N + 1];
-        A = new long[N + 1];
-
-        for (int n = 0; n <= N; n++) {
-            G.add(new ArrayList<>());
-        }
 
         st = new StringTokenizer(br.readLine());
         for (int n = 1; n <= N; n++) {
             C[n] = Integer.parseInt(st.nextToken());
+
             if (C[n] == 1) {
-                R++;
+                R += 1;
             } else {
-                B++;
+                B += 1;
             }
+            G.add(new ArrayList<>());
+            T.add(new ArrayList<>());
         }
+        G.add(new ArrayList<>());
+        T.add(new ArrayList<>());
 
         int u, v;
         for (int n = 0; n < N - 1; n++) {
             st = new StringTokenizer(br.readLine());
+
             u = Integer.parseInt(st.nextToken());
             v = Integer.parseInt(st.nextToken());
 
@@ -74,22 +65,30 @@ public class Main {
             G.get(v).add(u);
         }
 
-        st = new StringTokenizer(br.readLine());
-        Q = Integer.parseInt(st.nextToken());
+        Q = Integer.parseInt(br.readLine());
 
         go(1, -1);
 
+        long[] result = new long[N + 1];
+        for (int n = 1; n <= N; n++) {
+            long notSubTreeRed = R - DP[n][0];
+            long notSubTreeBlue = B - DP[n][1];
+
+            for (int child : T.get(n)) {
+                result[n] += DP[child][0] * notSubTreeBlue;
+                result[n] += DP[child][1] * notSubTreeRed;
+                notSubTreeRed += DP[child][0];
+                notSubTreeBlue += DP[child][1];
+            }
+        }
+
+        int node;
         for (int q = 0; q < Q; q++) {
-            st = new StringTokenizer(br.readLine());
-            int node = Integer.parseInt(st.nextToken());
-            bw.write(String.valueOf(A[node]) + '\n');
+            node = Integer.parseInt(br.readLine());
+            bw.write(String.valueOf(result[node]) + '\n');
         }
 
         br.close();
         bw.close();
-    }
-
-    static class Pair {
-        long f, s;
     }
 }
