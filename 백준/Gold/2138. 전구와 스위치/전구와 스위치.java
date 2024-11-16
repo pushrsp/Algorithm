@@ -1,10 +1,19 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
     private static int N;
+    private static int[] A, B, C;
+
+    private static boolean isSame(int[] a, int[] b) {
+        for (int n = 0; n < N; n++) {
+            if (a[n] != b[n]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -15,65 +24,56 @@ public class Main {
 
         String s1 = br.readLine();
 
-        int[] a1 = new int[N];
+        A = new int[N];
+        B = new int[N];
         for (int n = 0; n < N; n++) {
-            a1[n] = s1.charAt(n) - '0';
+            A[n] = s1.charAt(n) - '0';
+            B[n] = s1.charAt(n) - '0';
         }
 
         String s2 = br.readLine();
-
-        int[] a2 = new int[N];
+        C = new int[N];
         for (int n = 0; n < N; n++) {
-            a2[n] = s2.charAt(n) - '0';
+            C[n] = s2.charAt(n) - '0';
         }
 
-        int ret1 = 0;
-        int[] t1 = Arrays.copyOf(a1, N);
+        int ret = 0;
         for (int n = 1; n < N; n++) {
-            if (t1[n - 1] != a2[n - 1]) {
-                ret1 += 1;
-                t1[n - 1] ^= 1;
-                t1[n] ^= 1;
+            if (A[n - 1] != C[n - 1]) {
+                A[n - 1] = (A[n - 1] + 1) % 2;
+                A[n] = (A[n] + 1) % 2;
                 if (n + 1 < N) {
-                    t1[n + 1] ^= 1;
+                    A[n + 1] = (A[n + 1] + 1) % 2;
                 }
-            }
-        }
-
-        for (int n = 0; n < N; n++) {
-            if (t1[n] != a2[n]) {
-                ret1 = Integer.MAX_VALUE;
-                break;
+                ret++;
             }
         }
 
         int ret2 = 1;
-        int[] t2 = Arrays.copyOf(a1, N);
-        t2[0] ^= 1;
-        t2[1] ^= 1;
+        B[0] = (B[0] + 1) % 2;
+        B[1] = (B[1] + 1) % 2;
         for (int n = 1; n < N; n++) {
-            if (t2[n - 1] != a2[n - 1]) {
-                ret2 += 1;
-                t2[n - 1] ^= 1;
-                t2[n] ^= 1;
+            if (B[n - 1] != C[n - 1]) {
+                B[n - 1] = (B[n - 1] + 1) % 2;
+                B[n] = (B[n] + 1) % 2;
                 if (n + 1 < N) {
-                    t2[n + 1] ^= 1;
+                    B[n + 1] = (B[n + 1] + 1) % 2;
                 }
+                ret2++;
             }
         }
 
-        for (int n = 0; n < N; n++) {
-            if (t2[n] != a2[n]) {
-                ret2 = Integer.MAX_VALUE;
-                break;
-            }
-        }
+        boolean isSame1 = isSame(A, C);
+        boolean isSame2 = isSame(B, C);
 
-        int ret = Math.min(ret1, ret2);
-        if (ret == Integer.MAX_VALUE) {
+        if (!isSame1 && !isSame2) {
             bw.write(String.valueOf(-1) + '\n');
-        } else {
+        } else if (isSame1 && isSame2) {
+            bw.write(String.valueOf(Math.min(ret, ret2)) + '\n');
+        } else if (isSame1) {
             bw.write(String.valueOf(ret) + '\n');
+        } else {
+            bw.write(String.valueOf(ret2) + '\n');
         }
 
         br.close();
