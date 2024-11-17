@@ -20,12 +20,26 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         K = Long.parseLong(st.nextToken());
 
+        DP[1][1] = 2;
+        DP[0][1] = 1;
+        DP[1][0] = 1;
+
         for (int i = 1; i <= 100; i++) {
             DP[i][0] = DP[0][i] = 1;
         }
 
-        for (int n = 1; n <= N; n++) {
-            for (int m = 1; m <= M; m++) {
+        for (int m = 2; m <= M; m++) {
+            DP[0][m] = 1;
+            DP[1][m] = DP[1][m - 1] + 1;
+        }
+
+        for (int n = 2; n <= N; n++) {
+            DP[n][0] = 1;
+            DP[n][1] = DP[n - 1][1] + 1;
+        }
+
+        for (int n = 2; n <= N; n++) {
+            for (int m = 2; m <= M; m++) {
                 DP[n][m] = DP[n - 1][m] + DP[n][m - 1];
                 if (DP[n][m] > 1000000000) {
                     DP[n][m] = 1000000000;
