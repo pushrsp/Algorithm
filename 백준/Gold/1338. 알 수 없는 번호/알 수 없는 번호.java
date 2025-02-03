@@ -24,25 +24,20 @@ public class Main {
         X = Math.abs(Long.parseLong(st.nextToken()));
         Y = Long.parseLong(st.nextToken());
 
-        boolean isValid = true;
-        if (Y < 0 || Y >= X) {
-            isValid = false;
-        }
+        if (0 <= Y && Y < X) {
+            long start = Math.floorDiv(A - Y, X) * X + Y;
+            if (start < A) {
+                start += X;
+            }
 
-        long first = (A / X) * X + Y;
-        if ((first - A) >= X) {
-            first -= X;
-        } else if (A - first > 0) {
-            first += X;
-        }
-
-        if (!isValid) {
-            bw.write("Unknwon Number\n");
-        } else if (B >= first) {
-            if (B >= first + X) {
-                bw.write("Unknwon Number\n");
+            if (A <= start && start <= B) {
+                if (A <= start + X && start + X <= B) {
+                    bw.write("Unknwon Number\n");
+                } else {
+                    bw.write(String.valueOf(start) + '\n');
+                }
             } else {
-                bw.write(String.valueOf(first) + '\n');
+                bw.write("Unknwon Number\n");
             }
         } else {
             bw.write("Unknwon Number\n");
