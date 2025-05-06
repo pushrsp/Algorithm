@@ -2,82 +2,104 @@ import java.util.*;
 
 class Solution {
     
-    private Map<Integer, List<Integer>> m = new HashMap<>();
-    private List<Component> components = new ArrayList<>();
-    private boolean[] visited = new boolean[1_000_001];
+    private static final List<List<Integer>> G = new ArrayList<>();
+    private static final Map<Integer, Integer> M = new HashMap<>();
+    private static final boolean[] V = new boolean[1_000_001];
     
-    private void go(int curr, Component component) {
-        visited[curr] = true;
-        int degree = m.get(curr).size();
+    static class Tree {
         
-        // normal even
-        if((curr % 2 == 0) && (degree % 2 == 0)) {
-            component.normalEven++;
+        int oddEvenCount;
+        int reverseOddEvenCount;
+        int nodeCount;
+        
+        public void increaseNodeCount() {
+            nodeCount++;
         }
         
-        // normal odd
-        if((curr % 2 == 1) && (degree % 2 == 1)) {
-            component.normalOdd++;
+        public void increaseOddEvenCount() {
+            oddEvenCount++;
         }
         
-        // reverse even
-        if((curr % 2 == 0) && (degree % 2 == 1)) {
-            component.reverseEven++;
+        public void increaseReverseOddEvenCount() {
+            reverseOddEvenCount++;
         }
         
-        // reverse odd
-        if((curr % 2 == 1) && (degree % 2 == 0)) {
-            component.reverseOdd++;
+        public boolean isOddEvenForest() {
+            return oddEvenCount == 1 && reverseOddEvenCount == nodeCount - 1;
         }
         
-        for(int child: m.get(curr)) {
-            if(!visited[child]) {
-                go(child, component);
-            }
+        public boolean isReverseOddEvenForest() {
+            return reverseOddEvenCount == 1 && oddEvenCount == nodeCount - 1;
+        }
+    }
+    
+    private void go(int curr, Tree tree) {
+        if(V[curr]) {
+            return;
+        }
+        
+        V[curr] = true;
+        tree.increaseNodeCount();
+        
+        if(curr % 2 == 0 && M.get(curr) % 2 == 0) { //홀짝노드
+            tree.increaseOddEvenCount();
+        }
+        
+        if(curr % 2 == 1 && M.get(curr) % 2 == 1) { //홀짝노드
+            tree.increaseOddEvenCount();
+        }
+        
+        if(curr % 2 == 0 && M.get(curr) % 2 == 1) { //역홀짝노드
+            tree.increaseReverseOddEvenCount();
+        }
+        
+        if(curr % 2 == 1 && M.get(curr) % 2 == 0) { //역홀짝노드
+            tree.increaseReverseOddEvenCount();
+        }
+        
+        for(int child: G.get(curr)) {
+            go(child, tree);
         }
     }
     
     public int[] solution(int[] nodes, int[][] edges) {
-        for(int node: nodes) {
-            m.put(node, new ArrayList<>());
+        for(int i = 0; i <= 1_000_000; i ++) {
+            G.add(new ArrayList<>());
+            M.put(i, 0);
         }
         
         for(int[] edge: edges) {
-            int x = edge[0], y = edge[1];
-            m.get(x).add(y);
-            m.get(y).add(x);
+            int a = edge[0], b = edge[1];
+            G.get(a).add(b);
+            G.get(b).add(a);
+            
+            M.replace(a, M.get(a) + 1);
+            M.replace(b, M.get(b) + 1);
         }
         
+        List<Tree> trees = new ArrayList<>();
         for(int node: nodes) {
-            if(!visited[node]) {
-                Component component = new Component();
-                go(node, component);
-                components.add(component);
+            if(V[node]) {
+                continue;
+            }
+            
+            Tree tree = new Tree();
+            go(node, tree);
+            trees.add(tree);
+        }
+        
+        int[] answer = {0, 0};
+        for(Tree tree: trees) {
+            if(tree.isOddEvenForest()) {
+                answer[0]++;
+            }
+            
+            if(tree.isReverseOddEvenForest()) {
+                answer[1]++;
             }
         }
         
         
-        int[] answer = {0, 0};
-        for(Component component: components) {
-            answer[0] += component.getNormalOrder();
-            answer[1] += component.getReverseOrder();
-        }
-        
         return answer;
-    }
-    
-    static class Component {
-        int normalOdd;
-        int normalEven;
-        int reverseOdd;
-        int reverseEven;
-        
-        int getNormalOrder() {
-            return (normalOdd == 1 && normalEven == 0) || (normalOdd == 0 && normalEven == 1) ? 1 : 0;
-        }
-        
-        int getReverseOrder() {
-            return (reverseOdd == 1 && reverseEven == 0) || (reverseOdd == 0 && reverseEven == 1) ? 1 : 0;
-        }
     }
 }
