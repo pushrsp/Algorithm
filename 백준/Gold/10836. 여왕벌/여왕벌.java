@@ -46,11 +46,7 @@ public class Main {
             int o = Integer.parseInt(st.nextToken());
             int t = Integer.parseInt(st.nextToken());
 
-            int index = 0;
-            for (int j = 0; j < z; j++, index++) {
-                G[pairs.get(index).y][pairs.get(index).x] += 0;
-            }
-
+            int index = z;
             for (int j = 0; j < o; j++, index++) {
                 G[pairs.get(index).y][pairs.get(index).x] += 1;
             }
