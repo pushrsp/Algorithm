@@ -42,21 +42,21 @@ public class Main {
             if ("U".equals(commands.get(i))) {
                 go(i + 1, y1, (y2 + y1) / 2, x1, x2);
 
-                for (int y = ((y2 + y1) / 2) + 1; y <= y2; y++) {
+                for (int y = (y2 + y1) / 2 + 1; y <= y2; y++) {
                     for (int x = x1; x <= x2; x++) {
-                        G[y][x] = hole(G[((y2 + y1) - y)][x], 0);
+                        G[y][x] = hole(G[(y2 + y1) - y][x], 0);
                     }
                 }
             } else if ("D".equals(commands.get(i))) {
-                go(i + 1, ((y1 + y2) / 2) + 1, y2, x1, x2);
+                go(i + 1, (y1 + y2) / 2 + 1, y2, x1, x2);
 
                 for (int y = y1; y <= (y2 + y1) / 2; y++) {
                     for (int x = x1; x <= x2; x++) {
-                        G[y][x] = hole(G[((y2 + y1) - y)][x], 0);
+                        G[y][x] = hole(G[(y2 + y1) - y][x], 0);
                     }
                 }
             } else if ("R".equals(commands.get(i))) {
-                go(i + 1, y1, y2, ((x1 + x2) / 2) + 1, x2);
+                go(i + 1, y1, y2, (x1 + x2) / 2 + 1, x2);
 
                 for (int y = y1; y <= y2; y++) {
                     for (int x = x1; x <= (x2 + x1) / 2; x++) {
@@ -67,7 +67,7 @@ public class Main {
                 go(i + 1, y1, y2, x1, (x1 + x2) / 2);
 
                 for (int y = y1; y <= y2; y++) {
-                    for (int x = ((x2 + x1) / 2) + 1; x <= x2; x++) {
+                    for (int x = (x2 + x1) / 2 + 1; x <= x2; x++) {
                         G[y][x] = hole(G[y][(x1 + x2) - x], 1);
                     }
                 }
@@ -84,7 +84,7 @@ public class Main {
 
         int pow = (int) Math.pow(2, K);
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < pow; i++) {
+        for (int i = 0; i < 2 * K; i++) {
             commands.add(st.nextToken());
         }
 
