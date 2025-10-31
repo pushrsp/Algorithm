@@ -3,22 +3,8 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int T;
-    private static int[] EMPTY = {};
-
-    private static int[] getArr(String arr, int len) {
-        if (len == 0) {
-            return EMPTY;
-        } else {
-            String input = arr.substring(1, arr.length() - 1);
-            String[] elem = input.split(",");
-            int[] ret = new int[elem.length];
-            for (int i = 0; i < elem.length; i++) {
-                ret[i] = Integer.parseInt(elem[i]);
-            }
-            return ret;
-        }
-    }
+    private static int T, N;
+    private static String P, X;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -26,54 +12,67 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         T = Integer.parseInt(st.nextToken());
-
         while (T-- > 0) {
-            String p = br.readLine();
-            int n = Integer.parseInt(br.readLine());
-            int[] arr = getArr(br.readLine(), n);
+            P = br.readLine();
+            N = Integer.parseInt(br.readLine());
+            X = br.readLine();
 
-            int start = 0, end = n;
+            String temp = X.substring(1, X.length() - 1);
+            int[] arr = new int[N];
+            
+            // 빈 배열이 아닐 때만 파싱
+            if (!temp.isEmpty()) {
+                String[] numArr = temp.split(",");
+                for (int i = 0; i < N; i++) {
+                    arr[i] = Integer.parseInt(numArr[i]);
+                }
+            }
+
+            int left = 0, right = N;  // right를 N으로 (N-1이 아님)
             boolean reversed = false;
             boolean error = false;
-            for (int i = 0; i < p.length(); i++) {
-                if (arr.length == 0 && p.charAt(i) == 'D') {
-                    bw.write("error\n");
-                    error = true;
-                    break;
-                }
-                if (p.charAt(i) == 'R') {
+            
+            for (int i = 0; i < P.length(); i++) {
+                if (P.charAt(i) == 'R') {
                     reversed = !reversed;
-                } else {
-                    if (start == end) {
-                        bw.write("error\n");
+                } else {  // D
+                    // D 연산 전에 에러 체크
+                    if (left == right) {
                         error = true;
                         break;
                     }
-
+                    
                     if (reversed) {
-                        end--;
+                        right--;
                     } else {
-                        start++;
+                        left++;
                     }
                 }
             }
 
-            if (!error) {
-                bw.write('[');
-                if (arr.length > 0 && start != end) {
-                    if (!reversed) {
-                        for (int i = start; i < end - 1; i++) {
-                            bw.write(String.valueOf(arr[i]) + ',');
+            if (error) {
+                bw.write("error\n");
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append('[');
+                
+                // left != right 일 때만 출력 (빈 배열이 아닐 때)
+                if (left != right) {
+                    if (reversed) {
+                        for (int i = right - 1; i > left; i--) {
+                            sb.append(arr[i]).append(',');
                         }
-                        bw.write(String.valueOf(arr[end - 1]));
+                        sb.append(arr[left]);
                     } else {
-                        for (int i = end - 1; i > start; i--) {
-                            bw.write(String.valueOf(arr[i]) + ',');
+                        for (int i = left; i < right - 1; i++) {
+                            sb.append(arr[i]).append(',');
                         }
-                        bw.write(String.valueOf(arr[start]));
+                        sb.append(arr[right - 1]);
                     }
                 }
-                bw.write("]\n");
+                sb.append(']');
+
+                bw.write(sb.toString() + '\n');
             }
         }
 
