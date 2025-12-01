@@ -9,22 +9,9 @@ import java.util.StringTokenizer;
 public class Main {
 
     private static int N, M, K;
-    private static long[] H = new long[200_001];
-    private static List<List<Integer>> G = new ArrayList<>();
-    private static boolean[] NON_FLOODED = new boolean[200_001];
-    private static boolean[] visited = new boolean[200_001];
-
-    private static void go(int curr, long height) {
-        for (Integer next : G.get(curr)) {
-            if (visited[next]) {
-                continue;
-            }
-
-            visited[next] = true;
-            NON_FLOODED[next] = NON_FLOODED[curr] && H[next] > height;
-            go(next, H[next]);
-        }
-    }
+    private static final long[] H = new long[200_001];
+    private static final List<List<Integer>> G = new ArrayList<>();
+    private static final boolean[] NON_FLOODED = new boolean[200_001];
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -54,13 +41,9 @@ public class Main {
         }
 
         K = Integer.parseInt(br.readLine());
-
-        List<Integer> candidates = new ArrayList<>();
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < K; i++) {
-            final int k = Integer.parseInt(st.nextToken());
-            NON_FLOODED[k] = true;
-            candidates.add(k);
+            NON_FLOODED[Integer.parseInt(st.nextToken())] = true;
         }
 
         for (int i = 1; i <= N; i++) {
@@ -76,15 +59,6 @@ public class Main {
                 NON_FLOODED[i] = NON_FLOODED[child] && H[i] > H[child];
             }
         }
-
-//        for (Integer candidate : candidates) {
-//            if (visited[candidate]) {
-//                continue;
-//            } else {
-//                visited[candidate] = true;
-//                go(candidate, H[candidate]);
-//            }
-//        }
 
         boolean ret = true;
         for (int i = 1; i <= N; i++) {
