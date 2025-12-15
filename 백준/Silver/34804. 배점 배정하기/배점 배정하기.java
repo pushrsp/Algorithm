@@ -1,10 +1,11 @@
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class Main {
 
     private static int N, M;
-    private static long[] score = new long[31];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -28,15 +29,6 @@ public class Main {
         }
 
         if (visited.size() == N) {
-            for (Long l : visited) {
-                List<Integer> chapters = new ArrayList<>();
-                for (int i = 1; i <= M; i++) {
-                    if ((l & (1 << i)) != 0) {
-                        chapters.add(i);
-                    }
-                }
-            }
-
             for (int i = 1; i < M; i++) {
                 bw.write(String.valueOf((long) Math.pow(2, i - 1)) + ' ');
             }
