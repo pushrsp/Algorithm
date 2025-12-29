@@ -16,9 +16,12 @@ public class Main {
         long ret = N + K - 1;
         for (int len = 2; len <= N; len++) {
             long max = K + (N - len);
-            int medianIndex = (len + 1) / 2;
-            long median = max - len + medianIndex;
-            ret = Math.max(ret, median * len);
+            int mid = len / 2;
+            if (len % 2 != 0) {
+                mid++;
+            }
+
+            ret = Math.max(ret, (max - len + mid) * len);
         }
 
         bw.write(String.valueOf(ret) + '\n');
