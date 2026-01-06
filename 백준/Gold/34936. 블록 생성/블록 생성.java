@@ -16,14 +16,6 @@ public class Main {
         T = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        PriorityQueue<Node> pq = new PriorityQueue<>((o1, o2) -> {
-            if (o1.t == o2.t) {
-                return Integer.compare(o1.f, o2.f);
-            } else {
-                return Integer.compare(o1.t, o2.t);
-            }
-        });
-
 
         TreeMap<Integer, PriorityQueue<Integer>> fee = new TreeMap<>();
         TreeMap<Integer, Integer> time = new TreeMap<>();
