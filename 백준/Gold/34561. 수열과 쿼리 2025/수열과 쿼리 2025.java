@@ -1,107 +1,87 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.io.*;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int[] parent;
-    private static int[] size;
+    private static int[] A = new int[300_001];
+    private static int N, M;
+    private static int[] parent = new int[300_001];
+    private static int[] numbers = new int[300_001];
 
-    private static int find(int node) {
-        if (parent[node] != node) {
-            parent[node] = find(parent[node]);
-        }
-        return parent[node];
-    }
-
-    private static void merge(int node1, int node2) {
-        int p1 = find(node1);
-        int p2 = find(node2);
-        if (p1 == p2) return;
-        if (size[p1] > size[p2]) {
-            size[p1] += size[p2];
-            parent[p2] = p1;
+    private static int go(int number) {
+        if (parent[number] == number) {
+            return number;
         } else {
-            size[p2] += size[p1];
-            parent[p1] = p2;
+            return parent[number] = go(parent[number]);
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    private static void union(int number, int i1, int i2) {
+        i1 = go(i1);
+        i2 = go(i2);
+
+        if (i1 == i2) {
+            return;
+        } else if (i1 < i2) {
+            parent[i2] = i1;
+            numbers[number] = i1;
+            A[i1] = number;
+        } else {
+            parent[i1] = i2;
+            numbers[number] = i2;
+            A[i2] = number;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st;
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(br.readLine().trim());
+        N = Integer.parseInt(st.nextToken());
 
-        parent = new int[N];
-        size = new int[N];
-        for (int i = 0; i < N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= N; i++) {
             parent[i] = i;
-            size[i] = 1;
+            A[i] = Integer.parseInt(st.nextToken());
         }
 
-        // mapping1: 대표 인덱스 -> 현재 값
-        // mapping2: 현재 값 -> 대표 인덱스
-        HashMap<Integer, Integer> mapping1 = new HashMap<>();
-        HashMap<Integer, Integer> mapping2 = new HashMap<>();
-
-        int[] A = new int[N];
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
-            if (mapping2.containsKey(A[i])) {
-                int j = mapping2.get(A[i]);
-                mapping1.remove(j);
-                merge(i, j);
-                int rep = find(i);
-                mapping2.put(A[i], rep);
-                mapping1.put(rep, A[i]);
+        for (int i = 1; i <= N; i++) {
+            if (numbers[A[i]] == 0) {
+                numbers[A[i]] = i;
             } else {
-                mapping2.put(A[i], i);
-                mapping1.put(i, A[i]);
+                union(A[i], i, numbers[A[i]]);
             }
         }
 
-        int M = Integer.parseInt(br.readLine().trim());
-        int query, x, y, z;
-        while (M-- > 0) {
+        M = Integer.parseInt(br.readLine());
+
+        int x, y, z;
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            query = Integer.parseInt(st.nextToken());
-            if (query == 1) {
-                x = Integer.parseInt(st.nextToken());
-                y = Integer.parseInt(st.nextToken());
-                if (x == y) continue;
-                if (!mapping2.containsKey(x)) continue;
-                if (mapping2.containsKey(y)) {
-                    int node1 = mapping2.get(x);
-                    int node2 = mapping2.get(y);
-                    merge(node1, node2);
-                    int rep = find(node1);
-                    mapping2.remove(x);
-                    mapping2.put(y, rep);
-                    mapping1.remove(node1);
-                    mapping1.remove(node2);
-                    mapping1.put(rep, y);
+            x = Integer.parseInt(st.nextToken());
+            y = Integer.parseInt(st.nextToken());
+
+            if (x == 1) {
+                z = Integer.parseInt(st.nextToken());
+                if (numbers[y] == 0) {
+                    continue;
+                }
+
+                if (numbers[z] != 0) {
+                    union(z, numbers[y], numbers[z]);
+                    numbers[y] = 0;
                 } else {
-                    int node1 = mapping2.get(x);
-                    mapping1.put(node1, y);
-                    mapping2.remove(x);
-                    mapping2.put(y, node1);
+                    numbers[z] = numbers[y];
+                    numbers[y] = 0;
+                    A[numbers[z]] = z;
                 }
             } else {
-                z = Integer.parseInt(st.nextToken());
-                z--;
-                int rep = find(z);
-                bw.write(String.valueOf(mapping1.get(rep)) + '\n');
+                bw.write(String.valueOf(A[go(y)]) + '\n');
             }
         }
 
-        bw.flush();
-        bw.close();
         br.close();
+        bw.close();
     }
 }
