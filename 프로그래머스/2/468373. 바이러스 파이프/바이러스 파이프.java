@@ -16,7 +16,6 @@ class Solution {
                 continue;
             }
 
-
             Set<Integer> children = new HashSet<>();
             for (Integer i : infected) {
                 for (Pair pair : G.get(i)) {
