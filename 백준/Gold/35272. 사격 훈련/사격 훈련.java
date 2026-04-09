@@ -31,29 +31,19 @@ public class Main {
         Q = Double.parseDouble(st.nextToken());
 
         double maxExpected = 0.0;
-
-        // 하늘이가 k발을 쏘는 경우 (0 <= k <= N)
         for (int k = 0; k <= N; k++) {
             double expected = 0.0;
-
-            // 하늘이가 i명 맞히고, 푸르매가 j명 맞히는 경우
             for (int i = 0; i <= k; i++) {
                 for (int j = 0; j <= N; j++) {
                     int total = i + j;
 
-                    // N발 초과 시 부정 (0점)
                     if (total > N) {
                         continue;
                     }
 
-                    // 확률 계산
-                    // 하늘이가 k발 중 i발 맞힐 확률
                     double prob_i = comb[k][i] * Math.pow(P, i) * Math.pow(1 - P, k - i);
-
-                    // 푸르매가 N발 중 j발 맞힐 확률
                     double prob_j = comb[N][j] * Math.pow(Q, j) * Math.pow(1 - Q, N - j);
 
-                    // 이 경우의 확률과 점수를 곱하기
                     expected += prob_i * prob_j * total;
                 }
             }
